@@ -1,0 +1,323 @@
+﻿<Page x:Class="InfoKiosk.PageSelectSection"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InfoKiosk"
+      mc:Ignorable="d" 
+      d:DesignHeight="918" 
+      d:DesignWidth="1920"
+      Title="PageSelectSection">
+
+    <Grid>
+        <!--<Grid.RowDefinitions>
+            <RowDefinition Height="500"/>
+            <RowDefinition Height="1"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>-->
+
+        <!--<Border Grid.RowSpan="4"
+                Background="#FF03A3A2"
+                Margin="10,0,10,0"
+                CornerRadius="8"/>
+
+        <MediaElement Volume="0" 
+                      SpeedRatio="0.5"
+                      x:Name="MediaElementMain"
+                      UnloadedBehavior="Manual"
+                      MediaEnded="MediaElementMain_MediaEnded"
+                      LoadedBehavior="Manual"
+                      Margin="110,20,110,0"/>
+
+        --><!--<Border Grid.Row="1"
+                Height="1"
+                Background="LightGray"/>--><!--
+
+        <TextBlock Text="Выберите интересующий Вас раздел:"
+                   Grid.Row="2"
+                   HorizontalAlignment="Center"
+                   Margin="0,20,0,10"
+                   FontSize="40"
+                   Foreground="White"/>
+
+        <Grid Grid.Row="3" Margin="50,0,50,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="25*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="25*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="ButtonRateUs" 
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch">
+                <Button.Effect>
+                    <DropShadowEffect RenderingBias="Quality" Opacity="0.2" BlurRadius="10" ShadowDepth="10"/>
+                </Button.Effect>
+                <Grid Margin="40" HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+                    --><!--<Grid.RowDefinitions>
+                        <RowDefinition Height="20*"/>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="20*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>--><!--
+
+                    <TextBlock Text="Оценить нашу работу"
+                               Grid.Row="1"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontFamily="FuturaFuturisC"
+                               Foreground="DarkSlateGray"/>
+                    --><!--<Image Grid.Column="1" 
+                           Source="/InfoKiosk;component/Media/Image.png"
+                           Grid.Row="1"
+                           HorizontalAlignment="Right"/>--><!--
+                </Grid>
+            </Button>
+
+            <Button Grid.Column="2"
+                    x:Name="ButtonSchedule" 
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch">
+                <Button.Effect>
+                    <DropShadowEffect RenderingBias="Quality" Opacity="0.2" BlurRadius="10" ShadowDepth="10"/>
+                </Button.Effect>
+                <Grid Margin="20">
+                    --><!--<Grid.RowDefinitions>
+                        <RowDefinition Height="20*"/>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="20*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>--><!--
+
+                    <TextBlock Text="Расписание"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontFamily="FuturaFuturisC"
+                               Foreground="DarkSlateGray"/>
+                    --><!--<Image Grid.Column="1" 
+                           Source="/InfoKiosk;component/Media/Image.png"
+                           Grid.Row="1"
+                           HorizontalAlignment="Right"/>--><!--
+                </Grid>
+            </Button>
+            
+            <Button Grid.Column="4"
+                    x:Name="ButtonPrice" 
+                    VerticalContentAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch">
+                <Button.Effect>
+                    <DropShadowEffect RenderingBias="Quality" Opacity="0.2" BlurRadius="10" ShadowDepth="10"/>
+                </Button.Effect>
+                <Grid Margin="20">
+                    --><!--<Grid.RowDefinitions>
+                        <RowDefinition Height="20*"/>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="20*"/>
+                    </Grid.RowDefinitions>-->
+                    <!--<Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>--><!--
+
+                    <TextBlock Text="Услуги и цены"
+                               Grid.Row="1"
+                               FontFamily="FuturaFuturisC"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                    --><!--<Image Grid.Column="1" 
+                           Source="/InfoKiosk;component/Media/Image.png"
+                           Grid.Row="1" HorizontalAlignment="Right"/>--><!--
+                </Grid>
+            </Button>
+        </Grid>-->
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="25.14*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="25.14*"/>
+            <ColumnDefinition Width="37.71*"/>
+            <ColumnDefinition Width="6*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="42*"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="42*"/>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="#ff32a3a3" 
+                Margin="20,0,20,20"
+                Grid.RowSpan="5"
+                Grid.ColumnSpan="7" 
+                CornerRadius="8"/>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="4"
+                Background="#ff008584"
+                Margin="0,20,0,20" 
+                CornerRadius="8"/>
+
+        <Button Grid.Row="1"
+              Grid.RowSpan="3"
+              Grid.Column="2"
+              x:Name="ButtonRateUs"
+              PreviewMouseDown="ButtonRateUs_PreviewMouseDown">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+
+            <Grid>
+                <Image Source="/InfoKiosk;component/Media/RateUs.png"
+                   RenderOptions.BitmapScalingMode="HighQuality" Stretch="Fill"/>
+                <TextBlock Text="Оценить&#x0a;нашу работу" 
+                       FontSize="50" 
+                       Margin="20"/>
+            </Grid>
+        </Button>
+
+        <Button Grid.Row="1"
+              Grid.RowSpan="1"
+              Grid.Column="4"
+              x:Name="ButtonSchedule"
+              PreviewMouseDown="ButtonSchedule_PreviewMouseDown">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <Grid>
+                <Image Source="/InfoKiosk;component/Media/DoctorSchedule.png" 
+                   Stretch="Fill"/>
+
+                <TextBlock Text="Расписание&#x0a;приёма врачей" 
+                       Margin="20"
+                       FontSize="50"/>
+            </Grid>
+        </Button>
+
+        <Button Grid.Row="3"
+              Grid.RowSpan="1"
+              Grid.Column="4"
+              x:Name="ButtonServicesAndPrice"
+              PreviewMouseDown="ButtonServicesAndPrice_PreviewMouseDown">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <Grid>
+                <Image Source="/InfoKiosk;component/Media/PriceList.png" Stretch="Fill"/>
+
+                <TextBlock Text="Услуги и цены" 
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Left"
+                       Margin="20"
+                       FontSize="50"/>
+            </Grid>
+        </Button>
+
+        <Grid Grid.Row="2"
+              Grid.ColumnSpan="2"
+              Margin="40,20,20,20"
+              x:Name="ButtonSpecialOffers"
+              PreviewMouseDown="ButtonSpecialOffers_PreviewMouseDown"
+              Visibility="Collapsed">
+
+            <!--<Image Source="/InfoKiosk;component/Media/SpecialOffers2.png" Stretch="Fill" />-->
+
+            <TextBlock Text="АКЦИИ И&#x0a;СКИДКИ" 
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Left"
+                       Margin="20"
+                       FontSize="40"
+                       Foreground="#ff258375"/>
+        </Grid>
+
+        <Grid Grid.Row="2"
+              Grid.Column="2"
+              Grid.ColumnSpan="2"
+              Margin="20,20,40,20"
+              x:Name="ButtonPartnersOffering"
+              PreviewMouseDown="ButtonPartnersOffering_PreviewMouseDown"
+              Visibility="Collapsed">
+            <!--<Image Source="/InfoKiosk;component/Media/PartnersOfferings2.png" Stretch="Fill" />-->
+
+            <TextBlock Text="ПРЕДЛОЖЕНИЯ&#x0a;ОТ НАШИХ&#x0a;ПАРТНЕРОВ" 
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Left"
+                       Margin="20"
+                       FontSize="40"
+                       Foreground="#ff258375"/>
+        </Grid>
+
+        <Grid Grid.Row="2"
+              Grid.Column="4"
+              Grid.ColumnSpan="2"
+              Margin="20,20,40,20"
+              x:Name="ButtonClinicNavigation"
+              PreviewMouseDown="ButtonClinicNavigation_PreviewMouseDown"
+              Visibility="Collapsed">
+            <!--<Image Source="/InfoKiosk;component/Media/Route.png" Stretch="Fill" />-->
+
+            <TextBlock Text="КАК ПРОЙТИ&#x0a;К КАБИНЕТУ?" 
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Left"
+                       Margin="20"
+                       FontSize="40"
+                       Foreground="#ff258375"/>
+        </Grid>
+
+        <Image Grid.Row="1"
+               Grid.RowSpan="3"
+               Grid.Column="5" 
+               Source="/InfoKiosk;component/Media/LogoBackground.png"
+               Margin="0,20,0,20" 
+               Stretch="Fill"/>
+
+        <StackPanel Grid.Row="1"
+                    Grid.RowSpan="3"
+                    Grid.Column="5"
+                    Margin="20"
+                    VerticalAlignment="Center">
+            <TextBlock Text="Лучшие достижения мировой медицины"
+                       FontSize="50"
+                       Foreground="White"
+                       FontFamily="FuturaFuturisC"
+                       TextWrapping="WrapWithOverflow"
+                       TextAlignment="Center"/>
+            <TextBlock Text="Многопрофильная клиника международного уровня в центре Москвы"
+                       TextAlignment="Center"
+                       TextWrapping="WrapWithOverflow"
+                       FontSize="30"
+                       Margin="0,20,0,0"
+                       Foreground="White"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="5" 
+                   Grid.ColumnSpan="7"
+                   Text="Для выбора коснитесь нужной кнопки" 
+                   FontSize="40" 
+                   Foreground="#ff258375" 
+                   Opacity="0.7"
+                   HorizontalAlignment="Center" 
+                   Margin="4"/>
+    </Grid>
+</Page>

@@ -1,0 +1,117 @@
+﻿<Page x:Class="InfoKiosk.PageContacts"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InfoKiosk"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageContacts">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" 
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center"
+                   Margin="50,20,50,20"
+                   x:Name="TextBlockLeftPart">
+                <Span FontWeight="Bold"> Аптека </Span> <LineBreak/>
+                Пн-Суб: с 8:00 до 21:00
+                <LineBreak/><LineBreak/>
+                <Span FontWeight="Bold"> Поликлиника и дневной стационар:</Span>
+                         <LineBreak/>
+                8.00-21.00 пн-пт, 9-15 сб, Вс выходной
+                <LineBreak/><LineBreak/>
+                <Span FontWeight="Bold"> Хирургический стационар:</Span>
+                            <LineBreak/>
+                Круглосуточно
+                <LineBreak/><LineBreak/>
+                <Span FontWeight="Bold"> Адрес: </Span>
+                            <LineBreak/>
+                            601900 Владимирская область, город Ковров, улица Ватутина 90
+                <LineBreak/><LineBreak/>
+                <Span FontWeight="Bold"> Контактный телефон: </Span>
+                            <LineBreak/>
+                            8-800-222-95-53
+                <LineBreak/><LineBreak/>
+        </TextBlock>
+
+        <TextBlock Grid.Row="0" 
+                   Grid.Column="1"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center"
+                   Margin="50,20,50,20"
+                   x:Name="TextBlockRightPart">
+                <Span FontWeight="Bold"> Представительство Первого клинического медицинского центра в г. Москва: </Span>
+                            <LineBreak/>
+                            8-495-937-50-50
+                            <LineBreak/>
+                Астафьева Елена (персональный менеджер) - 8-926-706-01-07
+                <LineBreak/>
+                Перова Анна (персональный менеджер) - 8-916-430-71-17
+                <LineBreak/><LineBreak/>
+
+                <Span FontWeight="Bold"> Почта:</Span>
+                            <LineBreak/>
+                info@clinicalcenter.ru
+                <LineBreak/><LineBreak/>
+                <Span FontWeight="Bold"> Официальные профили в социальных сетях:</Span>
+                <LineBreak/>
+                Подписывайтесь на нас в социальных сетях и будьте в курсе новых акций первыми
+                            <LineBreak/>
+                Вконтакте: https://vk.com/pkmc33
+                <LineBreak/>
+                Facebook: https://www.facebook.com/pkmc33
+                <LineBreak/>
+                Одноклассники: https://ok.ru/pkmc33
+                <LineBreak/>
+                Инстаграмм: https://www.instagram.com/pkmc33/
+        </TextBlock>
+
+        <Button Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="20"
+                HorizontalAlignment="Left"
+                x:Name="ButtonBack"
+                Click="ButtonBack_Click"
+                Background="#FFf7f7f7"
+                Foreground="#FF616161"
+                BorderThickness="0"
+                Height="60">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/BackButton2.png" MaxWidth="40" Margin="10,0,0,0"/>
+                <TextBlock Text="Назад" Margin="10,0,10,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="20"
+                HorizontalAlignment="Right"
+                x:Name="ButtonFeedback"
+                Click="ButtonFeedback_Click"
+                Background="#FFf7f7f7"
+                Foreground="#FF616161"
+                BorderThickness="0"
+                Height="60">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/Image.png" MaxWidth="40" Margin="10,0,0,0"/>
+                <TextBlock Text="Обратная связь" Margin="10,0,10,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Page>

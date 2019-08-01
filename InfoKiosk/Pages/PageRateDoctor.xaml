@@ -1,0 +1,184 @@
+﻿<Page x:Class="InfoKiosk.PageRateDoctor"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InfoKiosk"
+      mc:Ignorable="d" 
+      d:DesignHeight="1000" 
+      d:DesignWidth="1980"
+      Title="PageRateDoctor">
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="#FFf7f7f7" 
+                HorizontalAlignment="Stretch"
+                Grid.ColumnSpan="3"/>
+
+        <TextBlock Text="Для выбора оценки коснитесь нужной кнопки:"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   Margin="40,20,40,20"/>
+
+        <Image Grid.Row="1" 
+               Source="/InfoKiosk;component/Media/DoctorWithoutAPhoto.png" 
+               Margin="0,50,0,50"
+               x:Name="ImageDocPhoto"
+               PreviewMouseDown="ImageDocPhoto_PreviewMouseDown"
+               RenderOptions.BitmapScalingMode="HighQuality">
+        </Image>
+
+        <TextBlock Grid.Row="2"
+                   Text="Бузунов Роман Вячеславович, Сомнолог"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   x:Name="TextBlockDocName"/>
+
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center"
+                    Margin="0,50,0,50"
+                    x:Name="StackPanelRates">
+
+            <Button x:Name="ButtonAngry" 
+                    Click="ButtonRate_Click">
+                <Button.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
+                </Button.Effect>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/InfoKiosk;component/Media/smile_angry.png" 
+                           MaxWidth="160" 
+                           Margin="10"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="Очень плохо" 
+                               HorizontalAlignment="Center" 
+                               Margin="20,10,20,10"/>
+                </StackPanel>
+            </Button>
+            
+            <Button x:Name="ButtonSad" 
+                    Click="ButtonRate_Click"
+                    Margin="60,0,60,0"
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                <Button.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
+                </Button.Effect>
+                <StackPanel Orientation="Vertical">
+                    <Image MaxWidth="160" 
+                           Margin="10" 
+                           Source="/InfoKiosk;component/Media/smile_sad.png"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="Плохо" 
+                               HorizontalAlignment="Center"
+                               Margin="10"/>
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="ButtonNeutral" 
+                    Click="ButtonRate_Click" 
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                <Button.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
+                </Button.Effect>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/InfoKiosk;component/Media/smile_neutral.png" 
+                           MaxWidth="160" 
+                           Margin="10"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="Средне" 
+                               HorizontalAlignment="Center" 
+                               Margin="10"/>
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="ButtonGood" 
+                    Click="ButtonRate_Click"
+                    Margin="60,0,60,0"
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                <Button.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
+                </Button.Effect>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/InfoKiosk;component/Media/smile_happy.png" 
+                           MaxWidth="160" 
+                           Margin="10"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="Хорошо" 
+                               HorizontalAlignment="Center" 
+                               Margin="10"/>
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="ButtonLove" 
+                    Click="ButtonRate_Click"
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                <Button.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
+                </Button.Effect>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/InfoKiosk;component/Media/smile_love.png" 
+                           MaxWidth="160" 
+                           Margin="10"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="Очень хорошо" 
+                               HorizontalAlignment="Center" 
+                               Margin="5,10,5,10"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <Button Grid.Row="4"
+                Grid.ColumnSpan="3"
+                Margin="20"
+                HorizontalAlignment="Left"
+                x:Name="ButtonBack"
+                BorderThickness="0"
+                Height="60">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/BackButton2.png" 
+                       MaxWidth="40" 
+                       Margin="10,0,0,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="Назад"
+                           Margin="10,0,10,0"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="4"
+                Grid.ColumnSpan="3"
+                Margin="20"
+                HorizontalAlignment="Center"
+                x:Name="ButtonHome"
+                BorderThickness="0"
+                Height="60">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/ButtonHome.png"
+                       MaxWidth="40"
+                       Margin="10,0,0,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="В начало" 
+                           Margin="10,0,10,0" 
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Page>

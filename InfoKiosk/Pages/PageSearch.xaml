@@ -1,0 +1,171 @@
+﻿<Page x:Class="InfoKiosk.Pages.PageSearch"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InfoKiosk.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="911" d:DesignWidth="1920"
+      Title="PageSearch">
+
+    <Grid x:Name="GridSearch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="1"
+                     VerticalAlignment="Bottom"
+                     HorizontalAlignment="Stretch"
+                     Margin="0,0,0,20"
+                     Height="{Binding ElementName=ButtonClear,Path=ActualHeight}"
+                     x:Name="TextBoxEntered"
+                     TextAlignment="Center"
+                     TextChanged="TextBoxEntered_TextChanged"/>
+
+            <Button Grid.Column="2"
+                    Margin="20"
+                    Height="60"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    x:Name="ButtonClear"
+                    Click="ButtonClear_Click"
+                    BorderThickness="0">
+                <Button.Effect>
+                    <DropShadowEffect Opacity="0.2" 
+                                      BlurRadius="10"/>
+                </Button.Effect>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/InfoKiosk;component/Media/ButtonClear.png" 
+                           MaxWidth="40"
+                           Margin="10"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <TextBlock x:Name="TextBlockHint"
+                   Grid.Row="1"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"/>
+
+        <Frame Grid.Row="1"
+               x:Name="UserContent" 
+               Margin="20" 
+               NavigationUIVisibility="Hidden"
+               JournalOwnership="OwnsJournal"/>
+
+        <Grid Grid.Row="1"
+              Width="6"
+              HorizontalAlignment="Right"
+              Margin="0,20,7,20"
+              x:Name="GridPagesIndicator"
+              Visibility="Hidden"/>
+
+        <Button Grid.Row="0"
+                Margin="20"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                x:Name="ButtonScrollUp"
+                Click="ButtonScrollUp_Click"
+                BorderThickness="0"
+                Height="60"
+                Visibility="Hidden">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/ButtonScrollUp.png" 
+                       MaxWidth="40"
+                       Margin="10,0,0,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="Вверх" 
+                           Margin="10,0,10,0" 
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="2"
+                Margin="20"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                x:Name="ButtonScrollDown"
+                Click="ButtonScrollDown_Click"
+                BorderThickness="0"
+                Height="60"
+                Visibility="Hidden">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/ButtonScrollDown.png" 
+                       MaxWidth="40"
+                       Margin="10,0,0,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="Вниз" 
+                           Margin="10,0,10,0" 
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
+        <Border Grid.Row="2"
+                x:Name="BorderKeyboard"/>
+
+        <Button Grid.Row="3"
+                Grid.ColumnSpan="3"
+                Margin="20"
+                HorizontalAlignment="Left"
+                x:Name="ButtonBack"
+                BorderThickness="0"
+                Height="60">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/BackButton2.png" 
+                       MaxWidth="40" 
+                       Margin="10,0,0,0" 
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="Назад" 
+                           Margin="10,0,10,0" 
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="3"
+                Grid.ColumnSpan="3"
+                Margin="20"
+                HorizontalAlignment="Center"
+                x:Name="ButtonHome"
+                BorderThickness="0"
+                Height="60">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.2" 
+                                  BlurRadius="10"/>
+            </Button.Effect>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKiosk;component/Media/ButtonHome.png" 
+                       MaxWidth="40"
+                       Margin="10,0,0,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="В начало" 
+                           Margin="10,0,10,0" 
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+        
+    </Grid>
+</Page>
