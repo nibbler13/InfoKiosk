@@ -1,0 +1,154 @@
+﻿<Page x:Class="InfoKioskServicesManager.Pages.PageServicesView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InfoKioskServicesManager.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageServicesView">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Специализация: "
+                   HorizontalAlignment="Center"
+                   x:Name="TextBlockSpecTitle"/>
+
+        <Border Height="1"
+                Background="LightGray"
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"/>
+
+        <TextBlock Text="Список услуг:"
+                   Grid.Row="2"/>
+
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="2"
+                    HorizontalAlignment="Right">
+            <CheckBox Content="Фильтр по коду:"
+                      VerticalAlignment="Center"
+                      x:Name="CheckboxFilterKodoper"
+                      Checked="CheckboxFilterKodoper_Checked"
+                      Unchecked="CheckboxFilterKodoper_Checked"/>
+            
+            <TextBox Width="80"
+                     Margin="6,0,20,0" 
+                     x:Name="TextBoxFilterKodoper" 
+                     TextChanged="TextBoxFilter_TextChanged"
+                     GotFocus="TextBoxFilterKodoper_GotFocus"/>
+            
+            <CheckBox Content="Фильтр по наименованию:"
+                      VerticalAlignment="Center"
+                      x:Name="CheckboxFilterName"
+                      Checked="CheckboxFilterName_Checked"
+                      Unchecked="CheckboxFilterName_Checked"/>
+            
+            <TextBox Width="140"
+                     Margin="6,0,0,0" 
+                     x:Name="TextBoxFilterName" 
+                     TextChanged="TextBoxFilter_TextChanged"
+                     GotFocus="TextBoxFilterName_GotFocus"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="4"
+                  SelectionUnit="FullRow"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserSortColumns="True"
+                  AutoGenerateColumns="False"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Auto"
+                  ItemsSource="{Binding ServicesView}"
+                  x:Name="DataGridServices"
+                  VerticalGridLinesBrush="Transparent"
+                  HorizontalGridLinesBrush="LightGray"
+                  IsReadOnly="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код услуги"
+                                    IsReadOnly="True"
+                                    Width="Auto" 
+                                    Binding="{Binding Kodoper}"/>
+
+                <DataGridTextColumn Header="Наименование услуги" 
+                                    IsReadOnly="True" 
+                                    Width="490" 
+                                    Binding="{Binding Name}"/>
+
+                <DataGridTemplateColumn Header="Стоимость" 
+                                        IsReadOnly="True"
+                                        Width="Auto"
+                                        SortMemberPath="Cost">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Cost}"
+                                       HorizontalAlignment="Right"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Приоритет"
+                                        Width="Auto"
+                                        IsReadOnly="False"
+                                        SortMemberPath="Priority">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Priority,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                                     IsReadOnly="False"
+                                     TextAlignment="Right"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock Grid.Row="6"
+                   TextWrapping="Wrap"
+                   Foreground="DarkGray"
+                   x:Name="TextBlockHint"/>
+
+        <Button Grid.Row="8"
+                HorizontalAlignment="Left"
+                Width="100"
+                x:Name="ButtonBack"
+                Click="ButtonBack_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKioskServicesManager;component/Media/Backward_16x.png" Stretch="None"/>
+                <TextBlock Text="Назад" Margin="6,0,6,0"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="8"
+                HorizontalAlignment="Center"
+                Width="100"
+                x:Name="ButtonSave"
+                Click="ButtonSave_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKioskServicesManager;component/Media/Save_16x.png" Stretch="None"/>
+                <TextBlock Text="Сохранить" Margin="6,0,6,0"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="8"
+                Width="210"
+                x:Name="ButtonSort"
+                Click="ButtonSort_Click"
+                HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKioskServicesManager;component/Media/SortByType_16x.png" Stretch="None"/>
+                <TextBlock Text="Сортировать как на терминале" Margin="6,0,6,0" TextAlignment="Center"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Page>

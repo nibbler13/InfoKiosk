@@ -37,7 +37,8 @@
                     Margin="0,0,0,100"
                     x:Name="StackPanelRates">
             <Button x:Name="Button0" 
-                    Click="ButtonRate_Click">
+                    Click="ButtonRate_Click"
+                    Tag="0">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" 
                                       Opacity="0.2"/>
@@ -54,7 +55,8 @@
             <Button x:Name="Button1" 
                     Click="ButtonRate_Click"
                     Margin="30,0,30,0"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="1">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -68,7 +70,8 @@
 
             <Button x:Name="Button2" 
                     Click="ButtonRate_Click"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="2">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -83,7 +86,8 @@
             <Button x:Name="Button3" 
                     Click="ButtonRate_Click"
                     Margin="20,0,20,0"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="3">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -97,7 +101,8 @@
 
             <Button x:Name="Button4" 
                     Click="ButtonRate_Click"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="4">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -112,7 +117,8 @@
             <Button x:Name="Button5" 
                     Click="ButtonRate_Click" 
                     Margin="20,0,20,0"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="5">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -130,7 +136,8 @@
 
             <Button x:Name="Button6" 
                     Click="ButtonRate_Click"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="6">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -145,7 +152,8 @@
             <Button x:Name="Button7" 
                     Click="ButtonRate_Click"
                     Margin="20,0,20,0"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="7">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -159,7 +167,8 @@
 
             <Button x:Name="Button8" 
                     Click="ButtonRate_Click"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="8">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -174,7 +183,8 @@
             <Button x:Name="Button9" 
                     Click="ButtonRate_Click"
                     Margin="20,0,20,0"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="9">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -188,7 +198,8 @@
 
             <Button x:Name="Button10" 
                     Click="ButtonRate_Click"
-                    Width="{Binding ElementName=Button0,Path=ActualWidth}">
+                    Width="{Binding ElementName=Button0,Path=ActualWidth}"
+                    Tag="10">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>

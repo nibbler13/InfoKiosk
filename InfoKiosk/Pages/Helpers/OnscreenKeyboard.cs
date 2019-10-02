@@ -12,16 +12,16 @@ namespace InfoKiosk {
 		private enum ShiftKeyStatus { Unpressed, Pressed, Capslock };
 		private ShiftKeyStatus currentShiftKeyStatus = ShiftKeyStatus.Unpressed;
 		private TimeSpan previousShiftKeyPress = new TimeSpan();
-		private double availableWidth;
-		private double availableHeight;
-		private double startX;
-		private double startY;
-		private double gap;
-		private double fontSize;
+		private readonly double availableWidth;
+		private readonly double availableHeight;
+		private readonly double startX;
+		private readonly double startY;
+		private readonly double gap;
+		private readonly double fontSize;
 		private Button buttonShift;
 		private Button buttonEnter;
 		public enum KeyboardType { Full, Short, Number }
-		private KeyboardType keyboardType;
+		private readonly KeyboardType keyboardType;
 		/// </summary>
 
 		public OnscreenKeyboard(
@@ -105,12 +105,13 @@ namespace InfoKiosk {
 			double keyboardY = startY + availableHeight - keyboardHeight;
 			double keyCurrentX = leftCornerShadow;
 			double keyCurrentY = leftCornerShadow;
-			
-			Canvas canvasKeyboard = new Canvas();
-			canvasKeyboard.Width = keyboardWidth + leftCornerShadow + rightCornerShadow;
-			canvasKeyboard.Height = keyboardHeight + leftCornerShadow + rightCornerShadow;
 
-			//if (Properties.Settings.Default.IsDebug)
+			Canvas canvasKeyboard = new Canvas {
+				Width = keyboardWidth + leftCornerShadow + rightCornerShadow,
+				Height = keyboardHeight + leftCornerShadow + rightCornerShadow
+			};
+
+			//if (Services.Configuration.Instance.IsDebug)
 			//	canvasKeyboard.Background = new SolidColorBrush(Colors.Yellow);
 
 			currentShiftKeyStatus = ShiftKeyStatus.Unpressed;
@@ -188,7 +189,7 @@ namespace InfoKiosk {
 						keyName.Equals("backspace") ||
 						keyName.Equals("Ввод") ||
 						keyName.Equals("clear"))
-						buttonKey.Background = new SolidColorBrush(Properties.Settings.Default.ColorDisabled);
+						buttonKey.Background = new SolidColorBrush(Services.Configuration.Instance.ColorDisabled);
 
 					if (imageToButton != null) {
 						Image image = ControlsFactory.CreateImage((System.Drawing.Bitmap)imageToButton);
@@ -249,15 +250,15 @@ namespace InfoKiosk {
 
 			if (isDoubleClick) {
 				currentShiftKeyStatus = ShiftKeyStatus.Capslock;
-				color = Properties.Settings.Default.ColorButtonBackground;
+				color = Services.Configuration.Instance.ColorButtonBackground;
 				image = Properties.Resources.ButtonCapslock;
 			} else if (currentShiftKeyStatus == ShiftKeyStatus.Unpressed) {
 				currentShiftKeyStatus = ShiftKeyStatus.Pressed;
-				color = Properties.Settings.Default.ColorButtonBackground;
+				color = Services.Configuration.Instance.ColorButtonBackground;
 				image = Properties.Resources.ButtonShiftPressed;
 			} else {
 				currentShiftKeyStatus = ShiftKeyStatus.Unpressed;
-				color = Properties.Settings.Default.ColorDisabled;
+				color = Services.Configuration.Instance.ColorDisabled;
 				image = Properties.Resources.ButtonShiftUnpressed;
 			}
 

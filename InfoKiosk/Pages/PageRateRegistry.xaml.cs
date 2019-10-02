@@ -26,19 +26,17 @@ namespace InfoKiosk {
 			MainWindow.ApplyStyleForButtons(new List<Button> { ButtonSad, ButtonNeutral, ButtonGood }, 40);
 		}
 
-		private void ButtonGood_Click(object sender, RoutedEventArgs e) {
-			PageRateThanks pageRateThanks = new PageRateThanks();
-			NavigationService.Navigate(pageRateThanks);
-		}
+		private void Button_Click(object sender, RoutedEventArgs e) {
+			Button button = sender as Button;
+			ItemSurveyResult.Instance.RateRegistry(button.Tag as string);
+			Page page;
 
-		private void ButtonNeutral_Click(object sender, RoutedEventArgs e) {
-			PageRateThanks pageRateThanks = new PageRateThanks();
-			NavigationService.Navigate(pageRateThanks);
-		}
+			if (button.Name.Contains("Sad"))
+				page = new PageComment();
+			else
+				page = new PageRateThanks();
 
-		private void ButtonSad_Click(object sender, RoutedEventArgs e) {
-			PageComment pageComment = new PageComment();
-			NavigationService.Navigate(pageComment);
+			NavigationService.Navigate(page);
 		}
 	}
 }

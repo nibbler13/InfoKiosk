@@ -31,6 +31,8 @@ namespace InfoKiosk {
 		private void ButtonRate_Click(object sender, RoutedEventArgs e) {
 			Button button = sender as Button;
 
+			ItemSurveyResult.Instance.RateClinic(button.Tag as string);
+
 			Page page;
 			if (button.Name.Equals("Button0"))
 				page = new PageComment();

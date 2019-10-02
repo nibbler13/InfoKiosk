@@ -3,12 +3,12 @@ using System.Data;
 using System.Collections.Generic;
 using FirebirdSql.Data.FirebirdClient;
 
-namespace InfoKiosk {
-    class SystemFirebirdClient {
-        private FbConnection connection;
+namespace InfoKiosk.Services {
+    sealed class FirebirdClient : IDisposable {
+		private readonly FbConnection connection;
 
-		public SystemFirebirdClient(string ipAddress, string baseName, string user, string pass) {
-			Logging.ToLog("Создание подключения к базе FB: " + 
+		public FirebirdClient(string ipAddress, string baseName, string user, string pass, bool isGui = false) {
+			Logging.ToLog("FirebirdClient - Создание подключения к базе: " + 
 				ipAddress + ":" + baseName);
 
 			FbConnectionStringBuilder cs = new FbConnectionStringBuilder();
@@ -23,26 +23,37 @@ namespace InfoKiosk {
 
 				connection = new FbConnection(cs.ToString());
 			} catch (Exception e) {
-				Logging.ToLog(e.Message + Environment.NewLine + e.StackTrace);
+				Logging.ToLog("FirebirdClient - " + e.Message + Environment.NewLine + e.StackTrace);
+
+				if (isGui)
+					throw;
 			}
 		}
 
-		public DataTable GetDataTable(string query, Dictionary<string, object> parameters = null) {
+
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+		public DataTable GetDataTable(string query, Dictionary<string, object> parameters = null, bool isGui = false) {
 			DataTable dataTable = new DataTable();
 
 			try {
 				connection.Open();
-				FbCommand command = new FbCommand(query, connection);
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+				using (FbCommand command = new FbCommand(query, connection)) {
+					if (parameters != null && parameters.Count > 0)
+						foreach (KeyValuePair<string, object> parameter in parameters)
+							command.Parameters.AddWithValue(parameter.Key, parameter.Value);
 
-				if (parameters != null && parameters.Count > 0)
-					foreach (KeyValuePair<string, object> parameter in parameters)
-						command.Parameters.AddWithValue(parameter.Key, parameter.Value);
-
-				FbDataAdapter fbDataAdapter = new FbDataAdapter(command);
-				fbDataAdapter.Fill(dataTable);
+					using (FbDataAdapter fbDataAdapter = new FbDataAdapter(command))
+						fbDataAdapter.Fill(dataTable);
+				}
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
 			} catch (Exception e) {
-				Logging.ToLog("GetDataTable exception: " + query + 
+				Logging.ToLog("FirebirdClient - GetDataTable exception: " + query + 
 					Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
+
+				if (isGui)
+					throw;
 			} finally {
 				connection.Close();
 			}
@@ -50,27 +61,39 @@ namespace InfoKiosk {
 			return dataTable;
 		}
 
-		public bool ExecuteUpdateQuery(string query, Dictionary<string, object> parameters) {
+
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+		public bool ExecuteUpdateQuery(string query, Dictionary<string, object> parameters, bool isGui = false) {
 			bool updated = false;
 
 			try {
 				connection.Open();
-				FbCommand update = new FbCommand(query, connection);
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+				using (FbCommand update = new FbCommand(query, connection)) {
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+					if (parameters != null && parameters.Count > 0)
+						foreach (KeyValuePair<string, object> parameter in parameters)
+							update.Parameters.AddWithValue(parameter.Key, parameter.Value);
 
-				if (parameters.Count > 0) 
-					foreach (KeyValuePair<string, object> parameter in parameters)
-						update.Parameters.AddWithValue(parameter.Key, parameter.Value);
-				
 
-				updated = update.ExecuteNonQuery() > 0 ? true : false;
+					updated = update.ExecuteNonQuery() > 0 ? true : false;
+				}
 			} catch (Exception e) {
-				Logging.ToLog("ExecuteUpdateQuery exception: " + query +
+				Logging.ToLog("FirebirdClient - ExecuteUpdateQuery exception: " + query +
 					Environment.NewLine + e.Message + Environment.NewLine + e.StackTrace);
+
+				if (isGui)
+					throw;
 			} finally {
 				connection.Close();
 			}
 
 			return updated;
+		}
+
+		public void Dispose() {
+			connection.Dispose();
 		}
 	}
 }

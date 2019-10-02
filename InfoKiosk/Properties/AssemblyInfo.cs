@@ -8,11 +8,11 @@ using System.Windows;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("InfoKiosk")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Приложение для отображения информации для пациентов клиники")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("nibbler13")]
 [assembly: AssemblyProduct("InfoKiosk")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("nibbler13 © 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

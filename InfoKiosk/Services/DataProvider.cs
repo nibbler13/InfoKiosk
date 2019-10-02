@@ -6,332 +6,190 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InfoKiosk {
-    class DataProvider {
-		public static SortedDictionary<string, List<string>> surveyDepartmentsAndDoctors;
-		public static SortedDictionary<string, SortedDictionary<string, SortedDictionary<string, string>>> scheduleDepartmentsAndDoctors;
-		public static SortedDictionary<string, List<ItemService>> price;
-		public static SortedDictionary<string, string> doctorsInfo;
-		private static SystemFirebirdClient firebirdClient;
+namespace InfoKiosk.Services {
+    public static class DataProvider {
+		public static SortedDictionary<string, List<ItemDoctor>> Survey { get; private set; } =
+			new SortedDictionary<string, List<ItemDoctor>>();
+		public static SortedDictionary<string, SortedDictionary<string, SortedDictionary<string, string>>> Schedule { get; private set; } =
+			new SortedDictionary<string, SortedDictionary<string, SortedDictionary<string, string>>>();
+		public static SortedDictionary<string, List<ItemService>> Services { get; private set; } =
+			new SortedDictionary<string, List<ItemService>>();
 
 		public async static void LoadData() {
-			surveyDepartmentsAndDoctors = new SortedDictionary<string, List<string>>();
-			scheduleDepartmentsAndDoctors = new SortedDictionary<string, SortedDictionary<string, SortedDictionary<string, string>>>();
-			price = new SortedDictionary<string, List<ItemService>>();
+			Logging.ToLog("DataProvider - Запрос данных из БД");
 
 			await Task.Run(() => {
-				GetDbData();
-			});
+				for(int i = 1; i <= 10; i++) {
+					try {
+						Logging.ToLog("Попытка: " + i);
+
+						using (FirebirdClient firebirdClient = new FirebirdClient(
+							Configuration.Instance.MisDbAddress,
+							Configuration.Instance.MisDbName,
+							Configuration.Instance.MisDbUserName,
+							Configuration.Instance.MisDbUserPassword)) {
+							LoadDepartmentsAndDoctors(firebirdClient);
+							LoadSchedule(firebirdClient);
+							LoadServices(firebirdClient);
+						};
+					} catch (Exception e) {
+						Logging.ToLog(e.Message + Environment.NewLine + e.StackTrace);
+						Logging.ToLog("Повторная попытка получения данных через: 60 секунд");
+						Thread.Sleep(60 * 1000);
+					}
+				}
+			}).ConfigureAwait(false);
 		}
 
-		private static void GetDbData() {
+		public static bool LoadServicesInGui(out string errorMessage) {
 			try {
-				firebirdClient = new SystemFirebirdClient(
-					Properties.Settings.Default.MisDbAddress,
-					Properties.Settings.Default.MisDbName,
-					Properties.Settings.Default.MisDbUserName,
-					Properties.Settings.Default.MisDbUserPassword
-				);
-
-				try {
-					DataTable dataTableSurvey = firebirdClient.GetDataTable(Properties.Settings.Default.SqlGetSurveyInfo);
-					foreach (DataRow dataRow in dataTableSurvey.Rows) {
-						string dept = ControlsFactory.FirstCharToUpper(dataRow["DEPARTMENT"].ToString(), true);
-						if (!surveyDepartmentsAndDoctors.ContainsKey(dept))
-							surveyDepartmentsAndDoctors.Add(dept, new List<string>());
-
-						string docname = dataRow["DOCNAME"].ToString();
-						if (!surveyDepartmentsAndDoctors[dept].Contains(docname))
-							surveyDepartmentsAndDoctors[dept].Add(docname);
-					}
-				} catch (Exception e) {
-					Logging.ToLog(e.Message + Environment.NewLine + e.StackTrace);
-					surveyDepartmentsAndDoctors = new SortedDictionary<string, List<string>>();
+				using (FirebirdClient firebirdClient = new FirebirdClient(
+					Configuration.Instance.MisDbAddress,
+					Configuration.Instance.MisDbName,
+					Configuration.Instance.MisDbUserName,
+					Configuration.Instance.MisDbUserPassword,
+					true)) {
+					LoadServices(firebirdClient, true);
 				}
 
-				try {
-					DataTable dataTableSchedule = firebirdClient.GetDataTable(Properties.Settings.Default.SqlGetScheduleInfo);
-					foreach (DataRow dataRow in dataTableSchedule.Rows) {
-						string depname = ControlsFactory.FirstCharToUpper(dataRow["DEPNAME"].ToString(), true);
-
-						if (!scheduleDepartmentsAndDoctors.ContainsKey(depname))
-							scheduleDepartmentsAndDoctors.Add(depname, new SortedDictionary<string, SortedDictionary<string, string>>());
-
-						string doctor = dataRow["FULLNAME"].ToString();
-
-						if (!scheduleDepartmentsAndDoctors[depname].ContainsKey(doctor))
-							scheduleDepartmentsAndDoctors[depname].Add(doctor, new SortedDictionary<string, string>());
-
-						for (int i = 0; i < 7; i++)
-							scheduleDepartmentsAndDoctors[depname][doctor].Add("D" + i, dataRow["D" + i].ToString());
-					}
-				} catch (Exception e) {
-					Logging.ToLog(e.Message + Environment.NewLine + e.StackTrace);
-					scheduleDepartmentsAndDoctors = new SortedDictionary<string, SortedDictionary<string, SortedDictionary<string, string>>>();
-				}
-
-				try {
-					DataTable dataTablePrice = firebirdClient.GetDataTable(
-						Properties.Settings.Default.SqlGetPriceInfo,
-						new Dictionary<string, object> {
-							{ "@filialID", Properties.Settings.Default.SqlGetPriceInfoFilialID} }
-						);
-
-					price = new SortedDictionary<string, List<ItemService>>();
-
-					foreach (DataRow dataRow in dataTablePrice.Rows) {
-						string cost = dataRow["COST"].ToString();
-						if (string.IsNullOrEmpty(cost) ||
-							(int.TryParse(cost, out int costValue) && costValue < 10))
-							continue;
-
-						string group = ControlsFactory.FirstCharToUpper(dataRow["GROUP"].ToString(), true);
-						if (!price.ContainsKey(group))
-							price.Add(group, new List<ItemService>());
-
-						string serviceName = dataRow["SERVICE_NAME"].ToString();
-						price[group].Add(new ItemService(serviceName, costValue));
-					}
-				} catch (Exception e) {
-					Logging.ToLog(e.Message + Environment.NewLine + e.StackTrace);
-				}
-
+				errorMessage = string.Empty;
+				return true;
 			} catch (Exception e) {
-				firebirdClient = null;
-				Logging.ToLog(e.Message + Environment.NewLine + e.StackTrace);
-				Thread.Sleep(60 * 1000);
-				GetDbData();
+				errorMessage = e.Message;
+				return false;
 			}
 		}
 
-		//private static void FillUpDepartmentsAndDoctors() {
-		//	surveyDepartmentsAndDoctors = new SortedDictionary<string, List<string>>() {
-		//		{ "Анестезиология-реаниматология", new List<string>() {
-		//			"Шигонцева Мария Александровна",
-		//			"Прокопец Олег Никитович",
-		//			"Нестеренко Андрей Андреевич",
-		//			"Миндиашвили Лана Важаевна",
-		//			"Лисин Александр Иванович",
-		//			"Бычков Евгений Игоревич"} },
-		//		{ "Вакцинация", new List<string>() {} },
-		//		{ "Гастроэнтерология", new List<string>() {
-		//			"Смирнова Екатерина Сергеевна",
-		//			"Зайцев Олег Вячеславович"} },
-		//		{ "ГБО (Гибербарическая оксигенация)", new List<string>() {
-		//			"Хватков Андрей Алексеевич"} },
-		//		{ "Гематология", new List<string>() {
-		//			"Лисина Екатерина Геннадьевна"} },
-		//		{ "Гинекология", new List<string>() {} },
-		//		{ "Дерматовенерология", new List<string>() {
-		//			"Клёпова Екатерина Владимировна"} },
-		//		{ "Детская гинекология", new List<string>() {} },
-		//		{ "Детская кардиология", new List<string>() {
-		//			"Исаева Ирина Викторовна"} },
-		//		{ "Детская неврология", new List<string>() {
-		//			"Игнатова Ирина Александровна"} },
-		//		{ "Диагностика", new List<string>() {
-		//			"Яковлев Дмитрий Игоревич",
-		//			"Шевчук Наталья Геннадьевна",
-		//			"Сагдеев Рустем Рашитович",
-		//			"Романов Иван Романович",
-		//			"Рачков Михаил Александрович",
-		//			"Проникова Галина Михайловна",
-		//			"Попова Яна Владимировна",
-		//			"Мальцева Ирина Александровна",
-		//			"Лысенко Оксана Михайловна",
-		//			"Литвинова Людмила Константиновна",
-		//			"Курышова Елена Александровна",
-		//			"Ипатов Сергей Евгеньевич",
-		//			"Дерендяев Павел Феликсович",
-		//			"Гуцол Валерий Терентьевич",
-		//			"Воробьев Владимир Викторович",
-		//			"Бурова Татьяна Владимировна",
-		//			"Балаев Станислав Львович"} },
-		//		{ "Кардиология", new List<string>() {
-		//			"Лобова Инга Викторовна",
-		//			"Барбанягра Иван Александрович",
-		//			"Шульпина Татьяна Михайловна",
-		//			"Фют Наталья Геннадьевна",
-		//			"Санкин Денис Валерьевич",
-		//			"Кутилова Наталия Юрьевна"} },
-		//		{ "Компьютерная томография (КТ)", new List<string>() {} },
-		//		{ "Косметология", new List<string>() {
-		//			"Афанасьева Светлана Владимировна"} },
-		//		{ "Лаборатория", new List<string>() {} },
-		//		{ "Магнитно – резонансная томография", new List<string>() {} },
-		//		{ "Медицина сна", new List<string>() {
-		//			"Бузунов Роман Вячеславович"} },
-		//		{ "Неврология", new List<string>() {
-		//			"Сидоренко Мария Ивановна",
-		//			"Саванина Людмила Александровна",
-		//			"Игнатова Ирина Александровна",
-		//			"Агафонова Марина Игоревна"} },
-		//		{ "Нефрология", new List<string>() {
-		//			"Старостина Екатерина Александровна"} },
-		//		{ "Онкология", new List<string>() {
-		//			"Янкин Михаил Викторович",
-		//			"Кузнецов Дмитрий Валерьевич"} },
-		//		{ "Оториноларингология", new List<string>() {
-		//			"Савин Сергей Викторович",
-		//			"Зимина Марина Геннадьевна"} },
-		//		{ "Офтальмология", new List<string>() {
-		//			"Селиванова Людмила Юрьевна",
-		//			"Богачук Андрей Викторович",
-		//			"Самохвалова Лилия Николаевна",
-		//			"Лейко Комила Бахтияровна"} },
-		//		{ "Педиатрия", new List<string>() {
-		//			"Орокина Татьяна Васильевна",
-		//			"Матюшева Светлана Александровна"} },
-		//		{ "Проктология", new List<string>() {
-		//			"Москвитин Иван Сергеевич",
-		//			"Пшеленская Анна Игоревна"} },
-		//		{ "Психиатрия и Наркология", new List<string>() {
-		//			"Хватков Андрей Алексеевич"} },
-		//		{ "Ревматология", new List<string>() {
-		//			"Куцина Екатерина Алексеевна"} },
-		//		{ "Сердечно-сосудистая хирургия", new List<string>() {
-		//			"Ямбатров Александр Георгиевич",
-		//			"Кузьминых Дмитрий Геннадьевич"} },
-		//		{ "Стоматология", new List<string>() {
-		//			"Рисов Денис Юрьевич",
-		//			"Орехова Екатерина Николаевна",
-		//			"Кузнецов Дмитрий Валерьевич",
-		//			"Котова Ольга Игоревна",
-		//			"Комиссарова Дарья Сергеевна",
-		//			"Киселёв Сергей Николаевич",
-		//			"Ибрагимов Тимофей Николаевич",
-		//			"Дубских Эльвира Павловна",
-		//			"Горбунова Анна Валерьевна"} },
-		//		{ "Терапия", new List<string>() {
-		//			"Шагалова Светлана Анатольевна",
-		//			"Смирнова Галина Исааковна",
-		//			"Пронина Ирина Юрьевна",
-		//			"Мариневич Ольга Юрьевна",
-		//			"Кузьмин Юрий Анатольевич",
-		//			"Артёмова Татьяна Владимировна"} },
-		//		{ "Травматолог – ортопед", new List<string>() {
-		//			"Яикбаев Игорь Петрович",
-		//			"Прокофьев Сергей Николаевич"} },
-		//		{ "Ультразвуковые исследования", new List<string>() {} },
-		//		{ "Урология", new List<string>() {
-		//			"Жаворонков Иван Борисович",
-		//			"Абрамов Михаил Александрович"} },
-		//		{ "Услуги логопеда", new List<string>() {} },
-		//		{ "Услуги по полису ДМС", new List<string>() {} },
-		//		{ "Услуги по полису ОМС", new List<string>() {} },
-		//		{ "Физиотерапия", new List<string>() {
-		//			"Клюкина Надежда Анатольевна",
-		//			"Антошина Татьяна Сергеевна"} },
-		//		{ "Флебология", new List<string>() {} },
-		//		{ "Функциональная диагностика", new List<string>() {} },
-		//		{ "Хирургия", new List<string>() {
-		//			"Янкин Михаил Викторович",
-		//			"Шипунова Ольга Александровна",
-		//			"Тютьнев Дмитрий Анатольевич",
-		//			"Стойловский Максим Игоревич",
-		//			"Сиднев Иван Николаевич",
-		//			"Носков Анатолий Игоревич",
-		//			"Ленский Олег Вячеславович",
-		//			"Ковалев Юрий Анатольевич",
-		//			"Борисов Иван Евгеньевич"} },
-		//		{ "Цифровая маммография", new List<string>() {} },
-		//		{ "Цифровая рентгенография", new List<string>() {} },
-		//		{ "Эндокринология", new List<string>() {
-		//			"Очирова Вероника Владимировна",
-		//			"Новожилова Ирина Юрьевна"} },
-		//		{ "Эндоскопическая диагностика", new List<string>() {} }
-		//	};
-		//}
+		private static void LoadDepartmentsAndDoctors(FirebirdClient firebirdClient) {
+			Logging.ToLog("DataProvider - Получение данных для оценки врачей");
+			using (DataTable dataTableSurvey = firebirdClient.GetDataTable(InfoKiosk.Services.Configuration.Instance.SqlGetSurveyInfo)) {
+				Logging.ToLog("DataProvider - Получено строк: " + dataTableSurvey.Rows.Count);
+				foreach (DataRow dataRow in dataTableSurvey.Rows) {
+					string dept = ControlsFactory.FirstCharToUpper(dataRow["DEPARTMENT"].ToString(), true);
+					if (!Survey.ContainsKey(dept))
+						Survey.Add(dept, new List<ItemDoctor>());
 
-		//private static void FillUpDoctorsDict() {
-		//	doctorsInfo = new SortedDictionary<string, string>() {
-		//		{ "Абрамов Михаил Александрович", "Врач – уролог" },
-		//		{ "Агафонова Марина Игоревна", "Врач – невролог." },
-		//		{ "Антошина Татьяна Сергеевна", "Врач – физиотерапевт. Общий медицинский стаж: 46 лет" },
-		//		{ "Артёмова Татьяна Владимировна", "врач-терапевт. первая квалификационная категория. медицинский стаж: 30 лет" },
-		//		{ "Афанасьева Светлана Владимировна", "Заведующий косметологическим отделением, врач–косметолог, врач-дерматовенеролог. Первая квалификационная категория по специальности дерматовенерология. Общий медицинский стаж: 18 лет" },
-		//		{ "Балаев Станислав Львович", "Врач ультразвуковой диагностики. медицинский стаж: 20 лет" },
-		//		{ "Барбанягра Иван Александрович", "Врач - кардиолог. Общий медицинский стаж: 2,4" },
-		//		{ "Богачук Андрей Викторович", "Врач – офтальмолог. Общий медицинский стаж: 9 лет" },
-		//		{ "Борисов Иван Евгеньевич", "Врач – хирург. медицинский стаж: 14 лет" },
-		//		{ "Бузунов Роман Вячеславович", "Руководитель центра медицины сна. Профессор, доктор медицинских наук, заслуженный врач Российской Федерации, Президент Российского общества сомнологов. Общий медицинский стаж: 30 лет" },
-		//		{ "Бурова Татьяна Владимировна", "Биолог клинико-диагностической лаборатории. медицинский стаж: 24 года" },
-		//		{ "Бычков Евгений Игоревич", "Врач – анестезиолог – реаниматолог. медицинский стаж: 4 года" },
-		//		{ "Воробьев Владимир Викторович", "Заведующий эндоскопическим отделением, врач – эндоскопист. высша квалификационная категория. медицинский стаж: 32 года" },
-		//		{ "Горбунова Анна Валерьевна", "Заведующий отделением, врач - детский - стоматолог. медицинский стаж: 19 лет" },
-		//		{ "Гуцол Валерий Терентьевич", "Врач функциональной диагностики. медицинский стаж: 16 лет" },
-		//		{ "Дерендяев Павел Феликсович", "Врач функциональной диагностики. медицинский стаж: 4 года" },
-		//		{ "Дубских Эльвира Павловна", "Врач-стоматолог-терапевт" },
-		//		{ "Жаворонков Иван Борисович", "Врач – уролог. высшая квалификационная категория. медицинский стаж: 25 лет" },
-		//		{ "Зайцев Олег Вячеславович", "Врач – гастроэнтеролог. высшая квалификационная категория. медицинский стаж: 30 лет" },
-		//		{ "Зимина Марина Геннадьевна", "Врач-оториноларинголог. первая квалификационная категория. медицинский стаж: 23 года" },
-		//		{ "Ибрагимов Тимофей Николаевич", "Врач-стоматолог-хирург, врач-стоматолог-ортопед. медицинский стаж: 13 лет" },
-		//		{ "Игнатова Ирина Александровна", "Врач – невролог. медицинский стаж: 5 лет" },
-		//		{ "Ипатов Сергей Евгеньевич", "Врач клинической лабораторной диагностики, врач-ревматолог. кандидат медицинских наук. медицинский стаж: 8 лет" },
-		//		{ "Исаева Ирина Викторовна", "Заведующий отделением, врач – детский кардиолог. первая квалификационная категория. медицинский стаж: 21 год" },
-		//		{ "Киселёв Сергей Николаевич", "Врач-стоматолог-хирург. медицинский стаж: 19 лет" },
-		//		{ "Клёпова Екатерина Владимировна", "Врач – дерматовенеролог. вторая квалификационная категория. медицинский стаж: 5 лет" },
-		//		{ "Клюкина Надежда Анатольевна", "Заведующий физиотерапевтическим отделением, врач – физиотерапевт. первая квалификационная категория. медицинский стаж: 34 года" },
-		//		{ "Ковалев Юрий Анатольевич", "Врач по рентгенэндоваскулярным диагностике и лечению. медицинский стаж: 21 год" },
-		//		{ "Комиссарова Дарья Сергеевна", "Врач - стоматолог" },
-		//		{ "Котова Ольга Игоревна", "Зубной врач" },
-		//		{ "Кузнецов Дмитрий Валерьевич", "Заведующий хирургическим отделением. Врач - хирург - онколог. медицинский стаж: 7 лет" },
-		//		{ "Кузьмин Юрий Анатольевич", "Врач–терапевт. медицинский стаж: 29 лет" },
-		//		{ "Кузьминых Дмитрий Геннадьевич", "Заведующий отделением сосудистой хирургии, врач-сердечно-сосудистый-хирург. Первая квалификационная категория. медицинский стаж: 9 лет" },
-		//		{ "Курышова Елена Александровна", "Врач – рентгенолог" },
-		//		{ "Кутилова Наталия Юрьевна", "Врач - кардиолог" },
-		//		{ "Куцина Екатерина Алексеевна", "Врач - ревматолог (артролог). медицинский стаж: 4 года" },
-		//		{ "Лейко Комила Бахтияровна", "Врач - офтальмолог" },
-		//		{ "Ленский Олег Вячеславович", "Врач - хирург. медицинский стаж: 24 года" },
-		//		{ "Лисин Александр Иванович", "Заведующий отделением анестезиологии-реанимации, врач – анестезиолог – реаниматолог. Первая квалификационная категория. медицинский стаж: 7 лет" },
-		//		{ "Лисина Екатерина Геннадьевна", "Врач - гематолог. первая квалификационная категория. медицинский стаж: 7 лет" },
-		//		{ "Литвинова Людмила Константиновна", "Врач клинической лабораторной диагностики. высшая квалификационная категория. медицинский стаж: 45 лет" },
-		//		{ "Лобова Инга Викторовна", "Врач кардиолог. кандидат медицинских наук. первая квалификационная категория. Общий медицинский стаж: 11 лет" },
-		//		{ "Лысенко Оксана Михайловна", "Врач-рентгенолог. медицинский стаж: 15 лет" },
-		//		{ "Мальцева Ирина Александровна", "Врач ультразвуковой диагностики. медицинский стаж: 35 лет" },
-		//		{ "Мариневич Ольга Юрьевна", "Заведующий кабинетом профпатологии, врач-профпатолог, врач-терапевт. высшая квалификационная категория. медицинский стаж: 34 года" },
-		//		{ "Матюшева Светлана Александровна", "Врач – педиатр. первая квалификационная категория. медицинский стаж: 26 лет" },
-		//		{ "Миндиашвили Лана Важаевна", "Врач – анестезиолог – реаниматолог. медицинский стаж: 3 года" },
-		//		{ "Москвитин Иван Сергеевич", "Врач - колопроктолог" },
-		//		{ "Нестеренко Андрей Андреевич", "Врач – анестезиолог – реаниматолог. высшая квалификационная категория. медицинский стаж: 31 год" },
-		//		{ "Новожилова Ирина Юрьевна", "Врач - детский эндокринолог. кандидат медицинских наук. высшая квалификационная категория. медицинский стаж: 20 года" },
-		//		{ "Носков Анатолий Игоревич", "Врач по рентгенэндоваскулярным диагностике и лечению" },
-		//		{ "Орехова Екатерина Николаевна", "Врач - стоматолог" },
-		//		{ "Орокина Татьяна Васильевна", "Врач - педиат. первая квалификационная категория. медицинский стаж: 38 лет" },
-		//		{ "Очирова Вероника Владимировна", "Врач-эндокринолог. Общий медицинский стаж: 7 лет" },
-		//		{ "Попова Яна Владимировна", "Заведующий кабинетом биохимических методов исследований, врач клинической лабораторной диагностики" },
-		//		{ "Прокопец Олег Никитович", "Врач - анестезиолог - реаниматолог. кандидат медицинских наук. высшая квалификационная категория. медицинский стаж: 24 года" },
-		//		{ "Прокофьев Сергей Николаевич", "Врач – травматолог – ортопед. медицинский стаж: 7 лет" },
-		//		{ "Проникова Галина Михайловна", "Врач функциональной диагностики. медицинский стаж: 36 лет" },
-		//		{ "Пронина Ирина Юрьевна", "Врач - терапевт. первая квалификационная категория. медицинский стаж: 24 года" },
-		//		{ "Пшеленская Анна Игоревна", "Врач-колопроктолог. кандидат медицинских наук. медицинский стаж: 11 лет" },
-		//		{ "Рачков Михаил Александрович", "Врач-рентгенолог" },
-		//		{ "Рисов Денис Юрьевич", "Врач - стоматолог - ортопед" },
-		//		{ "Романов Иван Романович", "Врач – эндоскопист" },
-		//		{ "Саванина Людмила Александровна", "Врач – невролог. медицинский стаж: 2,5 года" },
-		//		{ "Савин Сергей Викторович", "Заведующий оториноларингологическим отделением, врач-оториноларинголог. кандидат медицинских наук" },
-		//		{ "Сагдеев Рустем Рашитович", "Заведующий лабораторией, врач клинической лабораторной диагностики. медицинский стаж: 11 лет" },
-		//		{ "Самохвалова Лилия Николаевна", "Врач - офтальмолог. медицинский стаж: 30 лет" },
-		//		{ "Санкин Денис Валерьевич", "Врач - кардиолог. первая квалификационная категория. медицинский стаж: 8 лет" },
-		//		{ "Селиванова Людмила Юрьевна", "Руководитель офтальмологического центра. врач – офтальмолог. канд. мед. наук, член-корреспондент РАЕН РФ. Общий медицинский стаж: 20 лет" },
-		//		{ "Сиднев Иван Николаевич", "Врач по рентгенэндоваскулярным диагностике и лечению. первая квалификационная категория. медицинский стаж: 10 лет" },
-		//		{ "Сидоренко Мария Ивановна", "Врач - невролог. медицинский стаж: 19 лет" },
-		//		{ "Смирнова Галина Исааковна", "Заведующий кабинетом клинико-экспертной работы, контроля качества медицинской помощи и безопасности мед. деятельности. Врач первой категории. медицинский стаж: 35 лет" },
-		//		{ "Смирнова Екатерина Сергеевна", "Врач - гастроэнтеролог. медицинский стаж: 14 лет" },
-		//		{ "Старостина Екатерина Александровна", "Врач – нефролог, хирург" },
-		//		{ "Стойловский Максим Игоревич", "Врач – хирург (маммолог). медицинский стаж: 5 лет" },
-		//		{ "Тютьнев Дмитрий Анатольевич", "Руководитель сердечно-сосудистого центра, врач по рентгенэндоваскулярным диагностике и лечению. медицинский стаж: 5 лет" },
-		//		{ "Фют Наталья Геннадьевна", "Врач - кардиолог. высшая квалификационная категория. медицинский стаж: 21 год" },
-		//		{ "Хватков Андрей Алексеевич", "Врач-психиатр-нарколог, Заведующий кабинетом гипербарической оксигенации. медицинский стаж: 3 года" },
-		//		{ "Шагалова Светлана Анатольевна", "Заведующий терапевтическим отделением, врач-терапевт. медицинский стаж: 19 лет" },
-		//		{ "Шевчук Наталья Геннадьевна", "Заведующий кабинетом ультразвуковой диагностики, врач ультразвуковой диагностики. первая квалификационная категория. медицинский стаж: 13 лет" },
-		//		{ "Шигонцева Мария Александровна", "Врач – анестезиолог – реаниматолог. медицинский стаж: 3 года" },
-		//		{ "Шипунова Ольга Александровна", "Врач – сердечно – сосудистый хирург. вторая квалификационная категория" },
-		//		{ "Шульпина Татьяна Михайловна", "Заведующий отделением кардиологии, врач - кардиолог. медицинский стаж: 11 лет" },
-		//		{ "Яикбаев Игорь Петрович", "Врач – травматолог – ортопед. медицинский стаж: 3 года" },
-		//		{ "Яковлев Дмитрий Игоревич", "Заведующий отделением функциональной диагностики. Врач функциональной диагностики. Кандидат медицинских наук. Врач высшей категории. медицинский стаж: 14 лет" },
-		//		{ "Ямбатров Александр Георгиевич", "Врач - сердечно - сосудистый - хирург. кандидат медицинских наук. высшая квалификационная категория. медицинский стаж: 11 лет" },
-		//		{ "Янкин Михаил Викторович", "Врач-онколог. Общий медицинский стаж: 15 лет" }};
-		//}
-    }
+					string docname = dataRow["DOCNAME"].ToString();
+					string depNum = dataRow["DEPNUM"].ToString();
+					string dCode = dataRow["DCODE"].ToString();
+					string docPosition = dataRow["DOCPOSITION"].ToString();
+
+					ItemDoctor doc = new ItemDoctor(docname, docPosition, dept, dCode, depNum);
+#pragma warning disable CA1307 // Specify StringComparison
+					if (Survey[dept].FindAll(x => x.Code.Equals(dCode)).Count == 0)
+#pragma warning restore CA1307 // Specify StringComparison
+						Survey[dept].Add(doc);
+				}
+			}
+		}
+
+		private static void LoadSchedule(FirebirdClient firebirdClient) {
+			Logging.ToLog("DataProvider - Получение расписания врачей");
+			using (DataTable dataTableSchedule = firebirdClient.GetDataTable(InfoKiosk.Services.Configuration.Instance.SqlGetScheduleInfo)) {
+				Logging.ToLog("DataProvider - Получено строк: " + dataTableSchedule.Rows.Count);
+				foreach (DataRow dataRow in dataTableSchedule.Rows) {
+					string depname = ControlsFactory.FirstCharToUpper(dataRow["DEPNAME"].ToString(), true);
+
+					if (!Schedule.ContainsKey(depname))
+						Schedule.Add(depname, new SortedDictionary<string, SortedDictionary<string, string>>());
+
+					string doctor = dataRow["FULLNAME"].ToString();
+
+					if (!Schedule[depname].ContainsKey(doctor))
+						Schedule[depname].Add(doctor, new SortedDictionary<string, string>());
+
+					for (int i = 0; i < 7; i++)
+						Schedule[depname][doctor].Add("D" + i, dataRow["D" + i].ToString());
+				}
+			}
+		}
+
+		private static void LoadServices(FirebirdClient firebirdClient, bool isGui = false) {
+			Logging.ToLog("DataProvider - Получение информации о ценах и услугах");
+			using (DataTable dataTablePrice = firebirdClient.GetDataTable(
+				InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfo,
+				new Dictionary<string, object> { { "@filialID", InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfoFilialID } },
+				isGui)) {
+				Logging.ToLog("DataProvider - Получено строк: " + dataTablePrice.Rows.Count);
+				Services = new SortedDictionary<string, List<ItemService>>();
+
+				foreach (DataRow dataRow in dataTablePrice.Rows) {
+					string cost = dataRow["COST"].ToString();
+					if (string.IsNullOrEmpty(cost) ||
+						(int.TryParse(cost, out int costValue) && costValue < 10))
+						continue;
+
+					string group = ControlsFactory.FirstCharToUpper(dataRow["GROUP"].ToString(), true);
+					if (!Services.ContainsKey(group))
+						Services.Add(group, new List<ItemService>());
+
+					string serviceName = dataRow["SERVICE_NAME"].ToString();
+					string serviceKodoper = dataRow["SERVICE_CODE"].ToString();
+					string serviceSchid = dataRow["SCHID"].ToString();
+					string priority = dataRow["INFOKIOSK_PRIORITY"].ToString();
+
+					//if (!string.IsNullOrEmpty(priority))
+					//	Console.WriteLine("");
+
+					//bool isPriorityParsed = int.TryParse(priority, out int priorityParsed);
+					//int? priorityVaue = null;
+					//if (isPriorityParsed)
+					//	priorityVaue = priorityParsed;
+
+					Services[group].Add(new ItemService(serviceName, costValue, serviceSchid, serviceKodoper, priority));
+				}
+			}
+
+			foreach (string key in Services.Keys)
+				Services[key].Sort();
+		}
+
+		public static bool WriteItemServiceToDb(string department, out string message) {
+			if (!Services.ContainsKey(department)) {
+				message = "Не удается найти отделение: " + department;
+				return false;
+			}
+
+			int i = 0;
+			string query = "update wschema " +
+				 "set infokiosk_priority = @priority " +
+				 "where schid = @schid";
+
+			try {
+				using (FirebirdClient firebirdClient = new FirebirdClient(
+					Configuration.Instance.MisDbAddress,
+					Configuration.Instance.MisDbName,
+					Configuration.Instance.MisDbUserName,
+					Configuration.Instance.MisDbUserPassword)) {
+					foreach (ItemService item in Services[department]) {
+						if (!item.HasChanged)
+							continue;
+
+						object priorityValue = null;
+						if (int.TryParse(item.Priority, out int priority))
+							priorityValue = priority;
+
+						bool result = firebirdClient.ExecuteUpdateQuery(
+							query, 
+							new Dictionary<string, object> {
+								{ "@priority", priorityValue },
+								{ "@schid", item.Schid } 
+							}, 
+							true);
+
+						if (result) {
+							item.ConfirmSave();
+							i++;
+						}
+					}
+				}
+			} catch (Exception e) {
+				message = e.Message;
+				return false;
+			}
+
+			message = "Записано в БД строк: " + i;
+			return true;
+		}
+	}
 }

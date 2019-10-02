@@ -21,7 +21,7 @@ namespace InfoKiosk {
 			MainWindow.Instance.SetupPage(this);
 
 			Loaded += (s, e) => {
-				(Application.Current.MainWindow as MainWindow).SetupTitle("");
+				(Application.Current.MainWindow as MainWindow).SetupTitle(string.Empty, "Благодарим за участие в опросе");
 			};
 
 			GridMain.PreviewMouseDown += MainWindow.Instance.CloseAllPages;

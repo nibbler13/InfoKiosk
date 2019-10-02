@@ -15,7 +15,8 @@ using System.Windows.Shapes;
 
 namespace InfoKiosk {
 	public partial class PageSchedule : Page {
-		private Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
+		private readonly Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = 
+			new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
 		private int currentPageIndex = 0;
 
 		public PageSchedule(string department) {
@@ -34,7 +35,7 @@ namespace InfoKiosk {
 			ImageDepartment.Source = ControlsFactory.ImageSourceForBitmap((System.Drawing.Bitmap)ControlsFactory.GetImageForDepartment(department));
 
 			List<KeyValuePair<string, SortedDictionary<string, string>>> pageObjects = new List<KeyValuePair<string, SortedDictionary<string, string>>>();
-			foreach (KeyValuePair<string, SortedDictionary<string, string>> keyValuePair in DataProvider.scheduleDepartmentsAndDoctors[department]) {
+			foreach (KeyValuePair<string, SortedDictionary<string, string>> keyValuePair in Services.DataProvider.Schedule[department]) {
 				pageObjects.Add(keyValuePair);
 
 				if (pageObjects.Count == 11)
@@ -63,9 +64,11 @@ namespace InfoKiosk {
 			objects.Clear();
 			RowDefinition rowDefinition = new RowDefinition();
 			GridPagesIndicator.RowDefinitions.Add(rowDefinition);
-			Border border = new Border();
-			border.Background = new SolidColorBrush(Colors.LightGray);
-			border.Margin = new Thickness(0, 2, 0, 2);
+			Border border = new Border {
+				Background = new SolidColorBrush(Colors.LightGray),
+				Margin = new Thickness(0, 2, 0, 2)
+			};
+
 			Grid.SetRow(border, currentPageIndex);
 			GridPagesIndicator.Children.Add(border);
 

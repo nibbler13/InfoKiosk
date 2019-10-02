@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2046
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29319.158
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfoKiosk", "InfoKiosk\InfoKiosk.csproj", "{DF3BC464-C4C6-4899-80E4-142D2D45A7F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfoKioskConfigManager", "InfoKioskConfigManager\InfoKioskConfigManager.csproj", "{54F20C85-D072-474C-A826-F7499D7D0FD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfoKioskServicesManager", "InfoKioskServicesManager\InfoKioskServicesManager.csproj", "{970A3056-E6DB-4C78-BB4F-55B41FED9A3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{DF3BC464-C4C6-4899-80E4-142D2D45A7F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF3BC464-C4C6-4899-80E4-142D2D45A7F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF3BC464-C4C6-4899-80E4-142D2D45A7F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54F20C85-D072-474C-A826-F7499D7D0FD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54F20C85-D072-474C-A826-F7499D7D0FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54F20C85-D072-474C-A826-F7499D7D0FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54F20C85-D072-474C-A826-F7499D7D0FD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{970A3056-E6DB-4C78-BB4F-55B41FED9A3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{970A3056-E6DB-4C78-BB4F-55B41FED9A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{970A3056-E6DB-4C78-BB4F-55B41FED9A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{970A3056-E6DB-4C78-BB4F-55B41FED9A3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

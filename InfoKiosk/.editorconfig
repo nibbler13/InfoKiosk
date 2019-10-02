@@ -1,0 +1,9 @@
+﻿[*.cs]
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = silent
+
+dotnet_diagnostic.CA0507.severity = silent
+
+# IDE0011: Add braces
+csharp_prefer_braces = true:silent

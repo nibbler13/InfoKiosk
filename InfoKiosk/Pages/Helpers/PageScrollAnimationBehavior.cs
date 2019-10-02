@@ -43,7 +43,7 @@ namespace InfoKiosk {
 			target.SetValue(HorizontalOffsetProperty, value);
 		}
 
-		public static double cw(FrameworkElement target) {
+		public static double Cw(FrameworkElement target) {
 			return (double)target.GetValue(HorizontalOffsetProperty);
 		}
 
@@ -52,9 +52,7 @@ namespace InfoKiosk {
 		#region OnHorizontalOffset Changed
 
 		private static void OnHorizontalOffsetChanged(DependencyObject target, DependencyPropertyChangedEventArgs e) {
-			ScrollViewer scrollViewer = target as ScrollViewer;
-
-			if (scrollViewer != null) {
+			if (target is ScrollViewer scrollViewer) {
 				scrollViewer.ScrollToHorizontalOffset((double)e.NewValue);
 			}
 		}
@@ -100,9 +98,7 @@ namespace InfoKiosk {
 		#region OnVerticalOffset Changed
 
 		private static void OnVerticalOffsetChanged(DependencyObject target, DependencyPropertyChangedEventArgs e) {
-			ScrollViewer scrollViewer = target as ScrollViewer;
-
-			if (scrollViewer != null) {
+			if (target is ScrollViewer scrollViewer) {
 				scrollViewer.ScrollToVerticalOffset((double)e.NewValue);
 			}
 		}
@@ -134,12 +130,12 @@ namespace InfoKiosk {
 
 			if (target != null && target is ScrollViewer) {
 				ScrollViewer scroller = target as ScrollViewer;
-				scroller.Loaded += new RoutedEventHandler(scrollerLoaded);
+				scroller.Loaded += new RoutedEventHandler(ScrollerLoaded);
 			}
 
 			if (target != null && target is ListBox) {
 				ListBox listbox = target as ListBox;
-				listbox.Loaded += new RoutedEventHandler(listboxLoaded);
+				listbox.Loaded += new RoutedEventHandler(ListboxLoaded);
 			}
 		}
 
@@ -148,11 +144,11 @@ namespace InfoKiosk {
 		#region AnimateScroll Helper
 
 		private static void AnimateScroll(ScrollViewer scrollViewer, double ToValue) {
-			DoubleAnimation verticalAnimation = new DoubleAnimation();
-
-			verticalAnimation.From = scrollViewer.VerticalOffset;
-			verticalAnimation.To = ToValue;
-			verticalAnimation.Duration = new Duration(GetTimeDuration(scrollViewer));
+			DoubleAnimation verticalAnimation = new DoubleAnimation {
+				From = scrollViewer.VerticalOffset,
+				To = ToValue,
+				Duration = new Duration(GetTimeDuration(scrollViewer))
+			};
 
 			Storyboard storyboard = new Storyboard();
 
@@ -187,15 +183,11 @@ namespace InfoKiosk {
 		#region UpdateScrollPosition Helper
 
 		private static void UpdateScrollPosition(object sender) {
-			ListBox listbox = sender as ListBox;
-
-			if (listbox != null) {
+			if (sender is ListBox listbox) {
 				double scrollTo = 0;
 
 				for (int i = 0; i < (listbox.SelectedIndex); i++) {
-					ListBoxItem tempItem = listbox.ItemContainerGenerator.ContainerFromItem(listbox.Items[i]) as ListBoxItem;
-
-					if (tempItem != null) {
+					if (listbox.ItemContainerGenerator.ContainerFromItem(listbox.Items[i]) is ListBoxItem tempItem) {
 						scrollTo += tempItem.ActualHeight;
 					}
 				}
@@ -217,7 +209,7 @@ namespace InfoKiosk {
 
 		#region scrollerLoaded Event Handler
 
-		private static void scrollerLoaded(object sender, RoutedEventArgs e) {
+		private static void ScrollerLoaded(object sender, RoutedEventArgs e) {
 			ScrollViewer scroller = sender as ScrollViewer;
 
 			SetEventHandlersForScrollViewer(scroller);
@@ -227,7 +219,7 @@ namespace InfoKiosk {
 
 		#region listboxLoaded Event Handler
 
-		private static void listboxLoaded(object sender, RoutedEventArgs e) {
+		private static void ListboxLoaded(object sender, RoutedEventArgs e) {
 			ListBox listbox = sender as ListBox;
 
 			_listBoxScroller = FindVisualChildHelper.GetFirstChildOfType<ScrollViewer>(listbox);

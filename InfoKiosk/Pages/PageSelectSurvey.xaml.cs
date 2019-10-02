@@ -24,6 +24,7 @@ namespace InfoKiosk {
 			};
 
 			MainWindow.ApplyStyleForButtons(new List<Button> { ButtonRateClinic, ButtonRateDoc, ButtonRateRegistry }, 50);
+			ItemSurveyResult.Instance.ClearValues();
 		}
 
 		private void ButtonRateDoc_Click(object sender, RoutedEventArgs e) {

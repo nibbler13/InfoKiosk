@@ -21,14 +21,14 @@ namespace InfoKiosk {
 	public partial class PageScrollableContent : Page {
 		private bool isLoaded = false;
 		private enum TextBlockStyle { Department, DoctorName, WorkTime, Days }
-		private int maxRows;
+		private readonly int maxRows;
 
 		private PageScrollableContent() {
 			InitializeComponent();
 			MainWindow.Instance.SetupPage(this);
 		}
 
-		public PageScrollableContent(string[] objects,
+		public PageScrollableContent(object[] objects,
 							   ControlsFactory.ElementType type,
 							   RoutedEventHandler routedEventHandler,
 							   int elementsInRow,
@@ -149,8 +149,8 @@ namespace InfoKiosk {
 
 
 		private void CreateHeader() {
-			int offsetSat = -1;
-			int offsetSun = -1;
+			//int offsetSat = -1;
+			//int offsetSun = -1;
 
 			for (int i = 0; i < 7; i++) {
 				string dayOfWeek = string.Empty;
@@ -158,7 +158,7 @@ namespace InfoKiosk {
 				switch (dateToShow.DayOfWeek) {
 					case DayOfWeek.Sunday:
 						dayOfWeek = "Вс";
-						offsetSun = i;
+						//offsetSun = i;
 						break;
 					case DayOfWeek.Monday:
 						dayOfWeek = "Пн";
@@ -177,7 +177,7 @@ namespace InfoKiosk {
 						break;
 					case DayOfWeek.Saturday:
 						dayOfWeek = "Сб";
-						offsetSat = i;
+						//offsetSat = i;
 						break;
 					default:
 						break;
@@ -231,25 +231,19 @@ namespace InfoKiosk {
 
 				CreateTextBlock(dayOfWeek, 0, i + 1, TextBlockStyle.Days);
 			}
-
-			//if (offsetSat != -1)
-			//	CreateWeekendsBackground(offsetSat);
-
-			//if (offsetSun != -1)
-			//	CreateWeekendsBackground(offsetSun);
 		}
 
-		private void CreateWeekendsBackground(int columnOffset) {
-			for (int i = 0; i < GridSchedule.RowDefinitions.Count; i++) {
-				Border border = new Border {
-					Background = new SolidColorBrush(Color.FromArgb(20, 249, 141, 60))
-				};
-				Grid.SetRow(border, i);
-				Grid.SetColumn(border, 1 + columnOffset);
-				Grid.SetZIndex(border, -1);
-				GridSchedule.Children.Add(border);
-			}
-		}
+		//private void CreateWeekendsBackground(int columnOffset) {
+		//	for (int i = 0; i < GridSchedule.RowDefinitions.Count; i++) {
+		//		Border border = new Border {
+		//			Background = new SolidColorBrush(Color.FromArgb(20, 249, 141, 60))
+		//		};
+		//		Grid.SetRow(border, i);
+		//		Grid.SetColumn(border, 1 + columnOffset);
+		//		Grid.SetZIndex(border, -1);
+		//		GridSchedule.Children.Add(border);
+		//	}
+		//}
 
 		private TextBlock CreateTextBlock(string text, int row, int column, TextBlockStyle textBlockStyle) {
 			int columnSpan = 1;

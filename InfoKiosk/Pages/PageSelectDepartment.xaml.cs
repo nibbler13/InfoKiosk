@@ -18,15 +18,14 @@ namespace InfoKiosk {
 		private bool isLoaded = false;
 
 		public enum Source { Price, DocInfo, Timetable, DocRate }
-		private Source source;
-		private string title;
-		private string subtitle;
-		private Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
+		private readonly Source source;
+		private readonly string title;
+		private readonly string subtitle;
+		private readonly Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages =
+			new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
 		private int currentPageIndex = 0;
 
 		public PageSelectDepartment(Source source) {
-			Logging.ToLog("PageSelectDepartment - Initialize: " + source);
-
 			InitializeComponent();
 			MainWindow.Instance.SetupPage(this, ButtonBack, ButtonHome);
 			this.source = source;
@@ -63,21 +62,24 @@ namespace InfoKiosk {
 
 				if (!isLoaded) {
 					List<string> departments = new List<string>();
+
 					if (source == Source.Price)
 						try {
-							departments = DataProvider.price.Keys.ToList();//  Services.Instance.ServiceDict.Keys.ToList();
+							departments = Services.DataProvider.Services.Keys.ToList();
 						} catch (Exception exc) {
 							Logging.ToLog(exc.Message + Environment.NewLine + exc.StackTrace);
 						}
+
 					else if (source == Source.Timetable)
 						try {
-							departments = DataProvider.scheduleDepartmentsAndDoctors.Keys.ToList();
+							departments = Services.DataProvider.Schedule.Keys.ToList();
 						} catch (Exception exc) {
 							Logging.ToLog(exc.Message + Environment.NewLine + exc.StackTrace);
 						}
+
 					else if (source == Source.DocRate)
 						try {
-							foreach (KeyValuePair<string, List<string>> item in DataProvider.surveyDepartmentsAndDoctors)
+							foreach (KeyValuePair<string, List<ItemDoctor>> item in Services.DataProvider.Survey)
 								if (item.Value.Count > 0)
 									departments.Add(item.Key);
 						} catch (Exception exc) {
@@ -138,9 +140,11 @@ namespace InfoKiosk {
 			objects.Clear();
 			RowDefinition rowDefinition = new RowDefinition();
 			GridPagesIndicator.RowDefinitions.Add(rowDefinition);
-			Border border = new Border();
-			border.Background = new SolidColorBrush(Colors.LightGray);
-			border.Margin = new Thickness(0, 2, 0, 2);
+			Border border = new Border {
+				Background = new SolidColorBrush(Colors.LightGray),
+				Margin = new Thickness(0, 2, 0, 2)
+			};
+
 			Grid.SetRow(border, currentPageIndex);
 			GridPagesIndicator.Children.Add(border);
 
@@ -177,6 +181,7 @@ namespace InfoKiosk {
 		private void ButtonDepartment_Click(object sender, RoutedEventArgs e) {
 			Button button = sender as Button;
 			string tag = button.Tag as string;
+
 			if (source == Source.Timetable) {
 				NavigationService.Navigate(new PageSchedule(tag));
 				return;

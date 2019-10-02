@@ -14,7 +14,9 @@
         FontSize="50"
         FontFamily="FuturaFuturisC"
         FontWeight="Medium"
-        Foreground="#FF1E1E1E">
+        Foreground="#FF1E1E1E"
+        Topmost="True"
+        Cursor="None">
     <Window.Resources>
         <Style x:Key="RoundCorner" TargetType="{x:Type Button}">
             <Setter Property="Template">

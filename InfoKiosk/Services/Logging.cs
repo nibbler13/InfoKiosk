@@ -4,10 +4,9 @@ using System.Linq;
 using System.Reflection;
 
 namespace InfoKiosk {
-	class Logging {
+	static class Logging {
 		public static string AssemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\";
-		private static string LOG_FILE_NAME = Assembly.GetExecutingAssembly().GetName().Name + "_*.log";
-		private const int MAX_LOGFILES_QUANTITY = 7;
+		private readonly static string LOG_FILE_NAME = Assembly.GetExecutingAssembly().GetName().Name + "_*.log";
 
 		public static void ToLog(string msg) {
 			string today = DateTime.Now.ToString("yyyyMMdd");
@@ -24,31 +23,22 @@ namespace InfoKiosk {
 			}
 
 			Console.WriteLine(msg);
-			CheckAndCleanOldFiles();
 		}
 
-		public static void WriteStringToFile(string text, string fileFullPath) {
-			ToLog("Запись текста в файл: " + fileFullPath + ", содержание: " + Environment.NewLine + text);
+		public static void CheckAndCleanOldFiles(uint maxLogfilesQuantity) {
+			ToLog("Logging - Удаление старых лог-файлов");
 
-			try {
-				System.IO.File.WriteAllText(fileFullPath, text);
-			} catch (Exception e) {
-				Console.WriteLine("WriteStringToFile exception: " + e.Message + Environment.NewLine + e.StackTrace);
-			}
-		}
-
-		private static void CheckAndCleanOldFiles() {
 			try {
 				DirectoryInfo dirInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
 				FileInfo[] files = dirInfo.GetFiles(LOG_FILE_NAME).OrderBy(p => p.CreationTime).ToArray();
 
-				if (files.Length <= MAX_LOGFILES_QUANTITY)
+				if (files.Length <= maxLogfilesQuantity)
 					return;
 
-				for (int i = 0; i < files.Length - MAX_LOGFILES_QUANTITY; i++)
+				for (int i = 0; i < files.Length - maxLogfilesQuantity; i++)
 					files[i].Delete();
 			} catch (Exception e) {
-				Console.WriteLine("CheckAndCleanOldFiles exception" + e.Message + Environment.NewLine + e.StackTrace);
+				ToLog("Logging - CheckAndCleanOldFiles exception: " + e.Message + Environment.NewLine + e.StackTrace);
 			}
 		}
 	}

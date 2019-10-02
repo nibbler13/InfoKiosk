@@ -13,33 +13,17 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 
 namespace InfoKiosk {
-	public class ControlsFactory {
+	public static class ControlsFactory {
 		public enum ElementType { Department, Doctor, Rate, Search, SurveySelect, Custom };
-
-		public static TextBox CreateTextBox(FontFamily fontFamily, double fontSize, bool isContentCentered = true, double width = -1, double height = -1,
-			double left = -1, double top = -1, Panel panel = null) {
-			TextBox textBox = new TextBox();
-			textBox.FontFamily = fontFamily;
-			textBox.FontSize = fontSize;
-			textBox.FontWeight = FontWeights.Normal;
-			textBox.IsReadOnly = true;
-			textBox.Focusable = false;
-
-			if (isContentCentered) {
-				textBox.VerticalContentAlignment = VerticalAlignment.Center;
-				textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
-			}
-
-			return textBox;
-		}
-		
+				
 		public static Button CreateButton(double width, double height, double left = -1, double top = -1, Panel panel = null) {
-			Button button = new Button();
-			button.Width = width;
-			button.Height = height;
-			button.Background = new SolidColorBrush(Properties.Settings.Default.ColorButtonBackground);
-			button.Foreground = new SolidColorBrush(Properties.Settings.Default.ColorLabelForeground);
-			button.BorderThickness = new Thickness(0);
+			Button button = new Button {
+				Width = width,
+				Height = height,
+				Background = new SolidColorBrush(Services.Configuration.Instance.ColorButtonBackground),
+				Foreground = new SolidColorBrush(Services.Configuration.Instance.ColorLabelForeground),
+				BorderThickness = new Thickness(0)
+			};
 			AddDropShadow(button);
 
 			if (left != -1 && top != -1) {
@@ -82,14 +66,6 @@ namespace InfoKiosk {
 		//	CircleButton.Template = circleButtonTemplate;
 		//}
 
-		public static Button CreateButtonWithImageOnly(System.Drawing.Bitmap bitmap, double width, double height,
-			double left = -1, double top = -1, Panel panel = null) {
-			Button button = CreateButton(width, height, left, top, panel);
-			Image image = CreateImage(bitmap);
-			button.Content = image;
-			return button;
-		}
-
 		public static Button CreateButtonWithTextOnly(string text, double width, double height, FontFamily fontFamily,
 			double fontSize, FontWeight fontWeight, double left = -1, double top = -1, Panel panel = null) {
 			Button button = CreateButton(width, height, left, top, panel);
@@ -101,10 +77,9 @@ namespace InfoKiosk {
 
 
 
-		public static Button CreateButtonWithImageAndText(string str, double width, double height, ElementType type,
+		public static Button CreateButtonWithImageAndText(object content, double width, double height, ElementType type,
 			FontFamily fontFamily, double fontSize, FontWeight fontWeight,
 			System.Drawing.Image imageInside = null, double left = -1, double top = -1, Panel panel = null, string dcode = "") {
-			string normalizedStr = str;
 			Orientation orientation = Orientation.Vertical;
 			double maxSizeCoefficient = 1.0;
 			double fontCoefficient = 0.7;
@@ -112,9 +87,17 @@ namespace InfoKiosk {
 			HorizontalAlignment horizontalAlignment = HorizontalAlignment.Center;
 			TextAlignment textAlignment = TextAlignment.Center;
 
+			string str = string.Empty;
+			if (content is string value)
+				str = value;
+			else if (content is ItemDoctor itemDoctor)
+				str = itemDoctor.Name;
+
+			string normalizedStr = str;
+
 			if (type == ElementType.Department) {
-				imageInside = GetImageForDepartment(str);
-				normalizedStr = str.Replace("- ", "-").Replace(" -", "-").Replace("-", " - ");
+				imageInside = GetImageForDepartment(str as string);
+				normalizedStr = normalizedStr.Replace("- ", "-").Replace(" -", "-").Replace("-", " - ");
 				normalizedStr = FirstCharToUpper(normalizedStr);
 				maxSizeCoefficient = 0.5;
 				fontCoefficient = 1.0;
@@ -142,9 +125,10 @@ namespace InfoKiosk {
 				fontCoefficient = 1.0;
 			}
 
-			Grid grid = new Grid();
-			grid.Width = width - 5;
-			grid.Height = height - 5;
+			Grid grid = new Grid {
+				Width = width - 5,
+				Height = height - 5
+			};
 
 			Button button = CreateButton(width, height, left, top, panel);
 			Image image = CreateImage((System.Drawing.Bitmap)imageInside, -1, -1, -1, -1, null, true, 10);
@@ -178,10 +162,13 @@ namespace InfoKiosk {
 			}
 
 			if (orientation == Orientation.Horizontal) {
-				ColumnDefinition col0 = new ColumnDefinition();
-				col0.Width = new GridLength(height);
-				ColumnDefinition col1 = new ColumnDefinition();
-				col1.Width = new GridLength(width - height);
+				ColumnDefinition col0 = new ColumnDefinition {
+					Width = new GridLength(height)
+				};
+
+				ColumnDefinition col1 = new ColumnDefinition {
+					Width = new GridLength(width - height)
+				};
 
 				grid.ColumnDefinitions.Add(col0);
 				grid.ColumnDefinitions.Add(col1);
@@ -189,10 +176,13 @@ namespace InfoKiosk {
 				Grid.SetColumn(image, 0);
 				Grid.SetColumn(textBlock, 1);
 			} else {
-				RowDefinition row0 = new RowDefinition();
-				row0.Height = new GridLength(height * maxSizeCoefficient);
-				RowDefinition row1 = new RowDefinition();
-				row1.Height = new GridLength(height - row0.Height.Value);
+				RowDefinition row0 = new RowDefinition {
+					Height = new GridLength(height * maxSizeCoefficient)
+				};
+
+				RowDefinition row1 = new RowDefinition {
+					Height = new GridLength(height - row0.Height.Value)
+				};
 
 				grid.RowDefinitions.Add(row0);
 				grid.RowDefinitions.Add(row1);
@@ -200,10 +190,12 @@ namespace InfoKiosk {
 				Grid.SetRow(image, 0);
 				Grid.SetRow(textBlock, 1);
 
-				Border border = new Border();
-				border.Background = new SolidColorBrush(Color.FromRgb(250, 250, 250));
-				border.CornerRadius = new CornerRadius(0, 0, 12, 12); // 12 - same as in the style
-				border.Margin = new Thickness(0, 0, 0, 5); // 5 - the shadow offset
+				Border border = new Border {
+					Background = new SolidColorBrush(Color.FromRgb(250, 250, 250)),
+					CornerRadius = new CornerRadius(0, 0, 12, 12), // 12 - same as in the style
+					Margin = new Thickness(0, 0, 0, 5) // 5 - the shadow offset
+				};
+
 				textBlock.Margin = new Thickness(0, 0, 0, 5);
 				Grid.SetRow(border, 1);
 				grid.Children.Add(border);
@@ -217,21 +209,22 @@ namespace InfoKiosk {
 			grid.Children.Add(textBlock);
 
 			button.Content = grid;
-			button.Tag = str;
+			button.Tag = content;
 
 			return button;
 		}
 
 		public static TextBlock CreateTextBlock(string text, FontFamily fontFamily, double fontSize, FontWeight fontWeight,
 			Color? colorForeground = null, FontStretch? fontStretch = null) {
-			TextBlock textBlock = new TextBlock();
-			textBlock.Text = text;
-			textBlock.TextAlignment = TextAlignment.Center;
-			textBlock.FontFamily = fontFamily;
-			textBlock.FontSize = fontSize;
-			textBlock.FontWeight = fontWeight;
-			textBlock.TextWrapping = TextWrapping.Wrap;
-			textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+			TextBlock textBlock = new TextBlock {
+				Text = text,
+				TextAlignment = TextAlignment.Center,
+				FontFamily = fontFamily,
+				FontSize = fontSize,
+				FontWeight = fontWeight,
+				TextWrapping = TextWrapping.Wrap,
+				TextTrimming = TextTrimming.CharacterEllipsis
+			};
 
 			if (colorForeground != null)
 				textBlock.Foreground = new SolidColorBrush((Color)colorForeground);
@@ -239,7 +232,7 @@ namespace InfoKiosk {
 			if (fontStretch != null)
 				textBlock.FontStretch = (FontStretch)fontStretch;
 
-			//if (Properties.Settings.Default.IsDebug)
+			//if (Services.Configuration.Instance.IsDebug)
 			//	textBlock.Background = new SolidColorBrush(Colors.Yellow);
 
 			return textBlock;
@@ -247,8 +240,10 @@ namespace InfoKiosk {
 
 		public static Image CreateImage(System.Drawing.Bitmap bitmap, double width = -1, double height = -1,
 			double left = -1, double top = -1, Panel panel = null, bool withMargin = true, double margin = 5.0) {
-			Image image = new Image();
-			image.Source = ImageSourceForBitmap(bitmap);
+			Image image = new Image {
+				Source = ImageSourceForBitmap(bitmap)
+			};
+
 			RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
 
 			if (withMargin)
@@ -272,13 +267,14 @@ namespace InfoKiosk {
 
 		public static Label CreateLabel(string text, Color background, Color foreground, FontFamily fontFamily, double fontSize, FontWeight fontWeight,
 				double width = -1, double height = -1, double left = -1, double top = -1, Panel panel = null) {
-			Label label = new Label();
-			label.Content = CreateTextBlock(text, fontFamily, fontSize, fontWeight);
-			label.Background = new SolidColorBrush(background);
-			label.Foreground = new SolidColorBrush(foreground);
-			label.HorizontalContentAlignment = HorizontalAlignment.Center;
-			label.HorizontalAlignment = HorizontalAlignment.Center;
-			label.VerticalContentAlignment = VerticalAlignment.Center;
+			Label label = new Label {
+				Content = CreateTextBlock(text, fontFamily, fontSize, fontWeight),
+				Background = new SolidColorBrush(background),
+				Foreground = new SolidColorBrush(foreground),
+				HorizontalContentAlignment = HorizontalAlignment.Center,
+				HorizontalAlignment = HorizontalAlignment.Center,
+				VerticalContentAlignment = VerticalAlignment.Center
+			};
 
 			if (width != -1 && height != -1) {
 				label.Width = width;
@@ -293,23 +289,23 @@ namespace InfoKiosk {
 			if (panel != null)
 				panel.Children.Add(label);
 
-			//if (Properties.Settings.Default.IsDebug && background == Colors.Transparent)
-			//	label.Background = new SolidColorBrush(Colors.YellowGreen);
-
 			return label;
 		}
 
 
-		[DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool DeleteObject([In] IntPtr hObject);
 		public static ImageSource ImageSourceForBitmap(System.Drawing.Bitmap bmp) {
 			var handle = bmp.GetHbitmap();
 			try {
 				return Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 			} finally {
-				DeleteObject(handle);
+				SafeNativeMethods.DeleteObject(handle);
 			}
+		}
+
+		private static class SafeNativeMethods {
+			[DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool DeleteObject([In] IntPtr hObject);
 		}
 
 		public static void AddDropShadow(UIElement element, bool heavyShadow = false) {

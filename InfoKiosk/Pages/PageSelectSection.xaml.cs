@@ -25,7 +25,7 @@ namespace InfoKiosk {
 			KeepAlive = true;
 
 			Loaded += (s, e) => {
-				(Application.Current.MainWindow as MainWindow).SetupTitle(""); //Выберите интересующий Вас раздел:
+				(Application.Current.MainWindow as MainWindow).SetupTitle("", "Выберите интересующий Вас раздел");
 				string movieFile = Path.Combine(Directory.GetCurrentDirectory(), "Media\\Final Comp_1 (1).mp4");
 				//MediaElementMain.Source = new Uri(movieFile);
 				//MediaElementMain.Play();

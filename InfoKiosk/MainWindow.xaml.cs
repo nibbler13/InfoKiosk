@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace InfoKiosk {
@@ -20,15 +14,13 @@ namespace InfoKiosk {
 	/// Логика взаимодействия для MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
-		public DateTime previousThankPageCloseTime;
 		private PageSelectSection rootPage;
 		private static MainWindow instance = null;
 		private static readonly object padlock = new object();
 		private readonly DispatcherTimer autoCloseTimer;
-		private DateTime dateTimeStart;
+		private readonly DateTime dateTimeStart;
 		private int infoPageCloseCounter = 0;
 		public Style StyleButtonRoundedCorner { get; private set; }
-
 
 
 		public static MainWindow Instance {
@@ -60,14 +52,14 @@ namespace InfoKiosk {
 			FrameMain.JournalOwnership = JournalOwnership.OwnsJournal;
 
 			autoCloseTimer = new DispatcherTimer {
-				Interval = TimeSpan.FromSeconds(Properties.Settings.Default.AutoCloseTimerIntervalInSeconds)
+				Interval = TimeSpan.FromSeconds(Services.Configuration.Instance.AutoCloseTimerIntervalInSeconds)
 			};
 
 			autoCloseTimer.Tick += AutoCloseTimer_Tick;
 			FrameMain.Navigated += FrameMain_Navigated;
 			PreviewMouseDown += MainWindow_PreviewMouseDown;
 
-			DataProvider.LoadData();
+			Services.DataProvider.LoadData();
 
 			Loaded += (s, e) => {
 				rootPage = new PageSelectSection();
@@ -76,6 +68,24 @@ namespace InfoKiosk {
 
 			instance = this;
 			StyleButtonRoundedCorner = Application.Current.MainWindow.FindResource("RoundCorner") as Style;
+
+			dateTimeStart = DateTime.Now;
+			DispatcherTimer autoQuitTimer = new DispatcherTimer {
+				Interval = TimeSpan.FromMinutes(1)
+			};
+
+			autoQuitTimer.Tick += (s, e) => {
+				if (DateTime.Now.Date != dateTimeStart.Date) {
+					Logging.ToLog("MainWindow - ==== Автоматическое завершение работы");
+					Application.Current.Shutdown();
+				}
+			};
+			autoQuitTimer.Start();
+
+			if (Services.Configuration.Instance.IsDebug) {
+				Topmost = false;
+				Cursor = Cursors.Arrow;
+			}
 		}
 
 
@@ -107,15 +117,25 @@ namespace InfoKiosk {
 
 			if (FrameMain.Content is PageServices ||
 				FrameMain.Content is PageSchedule)
-				if (infoPageCloseCounter < Properties.Settings.Default.AutoCloseTImerInfoPageMultiplier)
+				if (infoPageCloseCounter < Services.Configuration.Instance.AutoCloseTImerInfoPageMultiplier)
 					return;
 
 			Logging.ToLog("MainWindow - Автозакрытие страницы по таймеру");
+
+			if (ItemSurveyResult.Instance.NeedToWriteToDb) {
+				if (FrameMain.Content is PageCallback)
+					ItemSurveyResult.Instance.SetPhoneNumber("Timeout");
+				else if (FrameMain.Content is PageComment)
+					ItemSurveyResult.Instance.SetComment("Timeout");
+
+				ItemSurveyResult.WriteSurveyResultToDb();
+			}
+
 			CloseAllPages(null, null);
 		}
 
 		private void NavigateBack(object sender, RoutedEventArgs e) {
-			Logging.ToLog("MainWindow - NavigateBack");
+			Logging.ToLog("MainWindow - Возврат на предыдущую страницу");
 
 			if (FrameMain.NavigationService.CanGoBack) {
 				FrameMain.NavigationService.GoBack();
@@ -137,6 +157,9 @@ namespace InfoKiosk {
 
 			if (!(FrameMain.Content is PageRangeSelection))
 				FrameMain.NavigationService.Navigate(rootPage);
+
+			if (ItemSurveyResult.Instance.NeedToWriteToDb)
+				ItemSurveyResult.WriteSurveyResultToDb();
 
 			autoCloseTimer.Stop();
 			GC.Collect();
@@ -167,7 +190,9 @@ namespace InfoKiosk {
 			}
 		}
 
-		public void SetupTitle(string title) {
+		public void SetupTitle(string title, string details = "") {
+			Logging.ToLog("MainWindow - Переход на страницу: " + title + 
+				(string.IsNullOrEmpty(details) ? string.Empty : " @ " + details));
 			TextBlockTitle.Visibility = Visibility.Visible;
 			TextBlockTitle.Text = title;
 		}

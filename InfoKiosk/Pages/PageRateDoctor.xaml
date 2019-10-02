@@ -51,7 +51,8 @@
                     x:Name="StackPanelRates">
 
             <Button x:Name="ButtonAngry" 
-                    Click="ButtonRate_Click">
+                    Click="ButtonRate_Click"
+                    Tag="1">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -69,7 +70,8 @@
             <Button x:Name="ButtonSad" 
                     Click="ButtonRate_Click"
                     Margin="60,0,60,0"
-                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}"
+                    Tag="2">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -86,7 +88,8 @@
 
             <Button x:Name="ButtonNeutral" 
                     Click="ButtonRate_Click" 
-                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}"
+                    Tag="3">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -104,7 +107,8 @@
             <Button x:Name="ButtonGood" 
                     Click="ButtonRate_Click"
                     Margin="60,0,60,0"
-                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}"
+                    Tag="4">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -121,7 +125,8 @@
 
             <Button x:Name="ButtonLove" 
                     Click="ButtonRate_Click"
-                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}">
+                    Width="{Binding ElementName=ButtonAngry,Path=ActualWidth}"
+                    Tag="5">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>

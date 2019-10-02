@@ -35,8 +35,9 @@
                     HorizontalAlignment="Center"
                     Margin="0,0,0,100">
             <Button x:Name="ButtonSad" 
-                    Click="ButtonSad_Click"
-                    Foreground="#FF616161">
+                    Click="Button_Click"
+                    Foreground="#FF616161"
+                    Tag="2">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -52,9 +53,10 @@
             </Button>
             
             <Button x:Name="ButtonNeutral" 
-                    Click="ButtonNeutral_Click" 
+                    Click="Button_Click" 
                     Margin="60,0,60,0"
-                    Foreground="#FF616161">
+                    Foreground="#FF616161"
+                    Tag="3">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>
@@ -70,8 +72,9 @@
             </Button>
             
             <Button x:Name="ButtonGood" 
-                    Click="ButtonGood_Click"
-                    Foreground="#FF616161">
+                    Click="Button_Click"
+                    Foreground="#FF616161"
+                    Tag="4">
                 <Button.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.2"/>
                 </Button.Effect>

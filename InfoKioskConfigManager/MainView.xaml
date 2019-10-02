@@ -1,0 +1,375 @@
+﻿<Window x:Class="InfoKioskConfigManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InfoKioskConfigManager"
+        mc:Ignorable="d"
+        Title="ИнфоКиоск - управление настройками" 
+        Height="470"
+        Width="800"
+        MinHeight="470"
+        MinWidth="800"
+        Background="#FFF0F0F0"
+        WindowStartupLocation="CenterScreen">    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TabControl>
+            <TabItem Header="Основные">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="6"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.ColumnSpan="3" 
+                              Content="Режим отладки (отображается курсор, приложение НЕ поверх всех окон)"
+                              IsChecked="{Binding IsDebug}"/>
+
+                    <TextBlock Grid.Row="2"
+                               Text="Автоматическое закрытие страницы при простое (в секундах):"/>
+                    <TextBox Grid.Row="2" 
+                             Grid.Column="2" 
+                             Width="60"
+                             HorizontalAlignment="Left"
+                             Text="{Binding AutoCloseTimerIntervalInSeconds}"/>
+
+                    <TextBlock Grid.Row="4"
+                               Text="Максимально допустимое количество лог-файлов (шт.):"/>
+                    <TextBox Grid.Row="4"
+                             Grid.Column="2"
+                             Width="60"
+                             HorizontalAlignment="Left"
+                             Text="{Binding MaxLogfilesQuantity}"/>
+
+                    <TextBlock Grid.Row="6"
+                               Text="Путь сохранения снимков с веб-камеры (при наличии):"/>
+                    <Grid Grid.Row="6"
+                          Grid.Column="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox IsReadOnly="True"
+                                 Text="{Binding PathWebCamSaveTo}"/>
+                        <Button Grid.Column="2"
+                                Width="20"
+                                Command="{Binding ButtonClick}"
+                                CommandParameter="SelectPathWebCamSaveTo">
+                            <Image Source="Media/Folder_16x.png" Stretch="None"/>
+                        </Button>
+                        <Button Grid.Column="4"
+                                Width="20"
+                                Command="{Binding ButtonClick}"
+                                CommandParameter="ClearPathWebCamSaveTo">
+                            <Image Source="Media/CleanData_16x.png" Stretch="None"/>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Подключение к БД">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="6"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Адрес БД МИС Инфоклиника:"/>
+                    <TextBox Grid.Column="2"
+                             Text="{Binding MisDbAddress}"/>
+
+                    <TextBlock Grid.Row="2"
+                               Text="Имя базы:"/>
+                    <TextBox Grid.Row="2"
+                             Grid.Column="2"
+                             Text="{Binding MisDbName}"/>
+
+                    <TextBlock Grid.Row="4"
+                               Text="Имя пользователя:"/>
+                    <TextBox Grid.Row="4"
+                             Grid.Column="2"
+                             Text="{Binding MisDbUserName}"/>
+
+                    <TextBlock Grid.Row="6"
+                               Text="Пароль:"/>
+                    <PasswordBox Grid.Row="6"
+                             Grid.Column="2"
+                             local:PasswordHelper.Attach="True"
+                             local:PasswordHelper.Password="{Binding MisDbUserPassword, Mode=TwoWay}"/>
+
+                    <Button Grid.Row="8"
+                            Grid.ColumnSpan="3"
+                            Width="180"
+                            Command="{Binding ButtonClick}"
+                            CommandParameter="CheckDbConnection">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Media/Connect_16x.png" Stretch="None"/>
+                            <TextBlock Text="Проверить подключение" Margin="6,0,6,0"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="SQL-запросы">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Оценка работы врачей"
+                            Tag="ButtonSqlRateDoctor"
+                            Click="ButtonSqlQuery_Click"/>
+
+                    <Button Grid.Row="2"
+                            Content="Расписание работы врачей"
+                            Tag="ButtonSqlDoctorSchedule"
+                            Click="ButtonSqlQuery_Click"/>
+
+                    <Button Grid.Row="4"
+                            Content="Услуги и цены"
+                            Tag="ButtonSqlServices"
+                            Click="ButtonSqlQuery_Click"/>
+
+                    <Button Grid.Row="6"
+                            Content="Запись результата опроса"
+                            Tag="ButtonSqlInsertSurveyResult"
+                            Click="ButtonSqlQuery_Click"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Уведомления">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox Grid.ColumnSpan="7"
+                                  Content="Выполнять отправку писем"
+                                  IsChecked="{Binding ShouldSendMail}"/>
+
+                        <TextBlock Grid.Row="2"
+                                   Text="Адрес SMTP-сервера:"/>
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="2"
+                                 Text="{Binding MailSmtpServer}"/>
+
+                        <TextBlock Grid.Row="2"
+                                   Grid.Column="4"
+                                   Text="Порт:"/>
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="6"
+                                 Text="{Binding MailSmtpPort}"/>
+
+                        <TextBlock Grid.Row="4"
+                                   Text="Имя пользователя:"/>
+                        <TextBox Grid.Row="4"
+                                 Grid.Column="2"
+                                 Text="{Binding MailUser}"/>
+
+                        <TextBlock Grid.Row="4"
+                                   Grid.Column="4"
+                                   Text="Пароль:"/>
+                        <PasswordBox Grid.Row="4"
+                                     Grid.Column="6"
+                                     local:PasswordHelper.Attach="True"
+                                     local:PasswordHelper.Password="{Binding MailPassword,Mode=TwoWay}"/>
+
+                        <TextBlock Grid.Row="6"
+                                   Text="Домен:"/>
+                        <TextBox Grid.Row="6"
+                                 Grid.Column="2"
+                                 Text="{Binding MailUserDomain}"/>
+
+                        <CheckBox Grid.Row="6"
+                                  Grid.Column="4"
+                                  Grid.ColumnSpan="3"
+                                  Content="Использовать SSL"
+                                  IsChecked="{Binding MailEnableSSL}"/>
+
+                        <Button Grid.Row="8"
+                                Grid.ColumnSpan="7"
+                                Width="180"
+                                Command="{Binding ButtonClick}"
+                                CommandParameter="CheckMailSettings">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Media/Connect_16x.png" Stretch="None"/>
+                                <TextBlock Text="Проверить подключение" Margin="6,0,6,0"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,40,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="6"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Text="Идентификатор терминала:"/>
+                        <TextBox Grid.Column="2"
+                                 Grid.ColumnSpan="4"
+                                 Text="{Binding MailClinicName}"/>
+
+                        <TextBlock Grid.Row="2"
+                                   Text="Получатели системных уведомлений:"/>
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="2"
+                                 IsReadOnly="True"
+                                 Text="{Binding MailAdminAddress}"/>
+                        <Button Grid.Row="2"
+                                Grid.Column="6"
+                                Width="20"
+                                Tag="Получатели системных уведомлений:"
+                                Click="ButtonEditRecipients">
+                            <Image Source="Media/Edit_16x.png" Stretch="None"/>
+                        </Button>
+
+                        <CheckBox Grid.Row="4"
+                                  Content="Ставить получателей системных уведомлений в копию всех писем"
+                                  Grid.ColumnSpan="5"
+                                  IsChecked="{Binding ShouldAddAdminToCopy}"/>
+
+                        <TextBlock Grid.Row="6"
+                                   Text="Получатели негативных оценок про врачей:"/>
+                        <TextBox Grid.Row="6"
+                                 Grid.Column="2"
+                                 IsReadOnly="True"
+                                 Text="{Binding MailRecipientsNegativeMarksDoctor}"/>
+                        <Button Grid.Row="6"
+                                Grid.Column="4"
+                                Width="20"
+                                Tag="Получатели негативных оценок про врачей:"
+                                Click="ButtonEditRecipients">
+                            <Image Source="Media/Edit_16x.png" Stretch="None"/>
+                        </Button>
+
+                        <TextBlock Grid.Row="8"
+                                   Text="Получатели негативных оценок про клинику:"/>
+                        <TextBox Grid.Row="8"
+                                 Grid.Column="2"
+                                 IsReadOnly="True"
+                                 Text="{Binding MailRecipientsNegativeMarksClinic}"/>
+                        <Button Grid.Row="8"
+                                Grid.Column="4"
+                                Width="20"
+                                Tag="Получатели негативных оценок про клинику:"
+                                Click="ButtonEditRecipients">
+                            <Image Source="Media/Edit_16x.png" Stretch="None"/>
+                        </Button>
+
+                        <TextBlock Grid.Row="10"
+                                   Text="Получатели негативных оценок про регистратуру:"/>
+                        <TextBox Grid.Row="10"
+                                 Grid.Column="2"
+                                 IsReadOnly="True"
+                                 Text="{Binding MailRecipientsNegativeMarksRegistry}"/>
+                        <Button Grid.Row="10"
+                                Grid.Column="4"
+                                Width="20"
+                                Tag="Получатели негативных оценок про регистратуру:"
+                                Click="ButtonEditRecipients">
+                            <Image Source="Media/Edit_16x.png" Stretch="None"/>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Button Grid.Row="2"
+                HorizontalAlignment="Center"
+                Width="100"
+                Command="{Binding ButtonClick}"
+                CommandParameter="SaveConfig">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/Save_16x.png" Margin="6,0,0,0" Stretch="None"/>
+                <TextBlock Text="Сохранить" Margin="6,0,6,0"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="3"
+                HorizontalAlignment="Left"
+                Foreground="Gray"
+                Width="160"
+                Command="{Binding ButtonClick}"
+                CommandParameter="ResetToDefaults">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/Restart_16x.png" Margin="6,0,0,0" Stretch="None" />
+                <TextBlock Text="Сброс к изначальным" Margin="6,0,6,0"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

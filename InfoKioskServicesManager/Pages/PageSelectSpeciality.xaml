@@ -1,0 +1,41 @@
+﻿<Page x:Class="InfoKioskServicesManager.Pages.PageSelectSpeciality"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InfoKioskServicesManager"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageSelectSpeciality"
+      KeepAlive="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Выберите нужную специализацию из списка:"
+                   Margin="0,0,0,6"/>
+
+        <ListView Grid.Row="1"
+            x:Name="ListViewSpeciality"
+                  SelectionChanged="ListViewSpeciality_SelectionChanged"
+                  SelectionMode="Single"
+                  MouseDoubleClick="ListViewSpeciality_MouseDoubleClick"/>
+
+        <Button Grid.Row="2"
+                IsEnabled="False"
+                x:Name="ButtonNext"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Right"
+                Width="100"
+                Click="ButtonNext_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/InfoKioskServicesManager;component/Media/Next_16x.png" Stretch="None"/>
+                <TextBlock Text="Далее" Margin="6,0,6,0"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Page>

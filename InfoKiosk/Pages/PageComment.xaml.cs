@@ -22,7 +22,7 @@ namespace InfoKiosk {
 			MainWindow.Instance.SetupPage(this, ButtonBack);
 
 			Loaded += (s, e) => {
-				//(Application.Current.MainWindow as MainWindow).SetupTitle("");
+				(Application.Current.MainWindow as MainWindow).SetupTitle(string.Empty, "Желаете ли Вы оставить комментарий к своей оценке?");
 
 				onscreenKeyboard = new OnscreenKeyboard(ActualWidth, BorderKeyboard.ActualHeight, 0, 0, 9, 30, OnscreenKeyboard.KeyboardType.Full);
 				Canvas canvasKeyboard = onscreenKeyboard.CreateOnscreenKeyboard();
@@ -47,11 +47,15 @@ namespace InfoKiosk {
 		}
 
 		private void ButtonNo_Click(object sender, RoutedEventArgs e) {
+			ItemSurveyResult.Instance.SetComment("skipped");
+
 			PageCallback pageCallback = new PageCallback();
 			NavigationService.Navigate(pageCallback);
 		}
 
 		private void ButtonNext_Click(object sender, RoutedEventArgs e) {
+			ItemSurveyResult.Instance.SetComment(TextBoxComment.Text);
+
 			PageCallback pageCallback = new PageCallback();
 			NavigationService.Navigate(pageCallback);
 		}

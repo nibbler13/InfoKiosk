@@ -16,9 +16,10 @@ using System.Windows.Shapes;
 namespace InfoKiosk {
     public partial class PageSelectDoctor : Page {
 		private bool isLoaded = false;
-		private bool isSourceDocInfo;
-		private string title;
-		private Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
+		private readonly bool isSourceDocInfo;
+		private readonly string title;
+		private readonly Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = 
+			new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
 		private int currentPageIndex = 0;
 
 		public PageSelectDoctor(string department, bool isSourceDocInfo = false) {
@@ -29,11 +30,11 @@ namespace InfoKiosk {
 
 			UserContent.JournalOwnership = JournalOwnership.OwnsJournal;
 			Loaded += (s, e) => {
-				(Application.Current.MainWindow as MainWindow).SetupTitle(title);
+				(Application.Current.MainWindow as MainWindow).SetupTitle(title, department);
 
 				if (!isLoaded) {
-					List<string> pageObjects = new List<string>();
-					List<string> doctors = DataProvider.surveyDepartmentsAndDoctors[department];
+					List<ItemDoctor> pageObjects = new List<ItemDoctor>();
+					List<ItemDoctor> doctors = Services.DataProvider.Survey[department];
 					for (int i = 0; i < doctors.Count; i++) {
 						pageObjects.Add(doctors[i]);
 
@@ -74,19 +75,22 @@ namespace InfoKiosk {
 			ImageDepartment.Source = ControlsFactory.ImageSourceForBitmap((System.Drawing.Bitmap)ControlsFactory.GetImageForDepartment(department));
 		}
 
-		private void AddPageToList(List<string> objects) {
+		private void AddPageToList(List<ItemDoctor> objects) {
 			PageScrollableContent page = new PageScrollableContent(
 				objects.ToArray(),
 				ControlsFactory.ElementType.Doctor,
 				ButtonDoctor_Click,
 				5,
 				objects.Count < 10 && currentPageIndex == 0);
+
 			objects.Clear();
 			RowDefinition rowDefinition = new RowDefinition();
 			GridPagesIndicator.RowDefinitions.Add(rowDefinition);
-			Border border = new Border();
-			border.Background = new SolidColorBrush(Colors.LightGray);
-			border.Margin = new Thickness(0, 2, 0, 2);
+			Border border = new Border {
+				Background = new SolidColorBrush(Colors.LightGray),
+				Margin = new Thickness(0, 2, 0, 2)
+			};
+
 			Grid.SetRow(border, currentPageIndex);
 			GridPagesIndicator.Children.Add(border);
 
@@ -122,19 +126,14 @@ namespace InfoKiosk {
 
 		private void ButtonDoctor_Click(object sender, RoutedEventArgs e) {
 			Button button = sender as Button;
-			string docName = button.Tag as string;
 			Page page;
 
 			if (isSourceDocInfo)
 				page = new PageDocInfo();
 			else
-				page = new PageRateDoctor(docName);
+				page = new PageRateDoctor(button.Tag as ItemDoctor);
 
 			NavigationService.Navigate(page);
-		}
-
-		private void ButtonSearch_Click(object sender, RoutedEventArgs e) {
-
 		}
 	}
 }

@@ -16,7 +16,8 @@ using System.Windows.Shapes;
 
 namespace InfoKiosk {
     public partial class PageServices : Page {
-		private Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
+		private readonly Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = 
+			new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
 		private int currentPageIndex = 0;
 
 		public PageServices(string department) {
@@ -35,7 +36,7 @@ namespace InfoKiosk {
 			ImageDepartment.Source = ControlsFactory.ImageSourceForBitmap((System.Drawing.Bitmap)ControlsFactory.GetImageForDepartment(department));
 
 			List<ItemService> pageObjects = new List<ItemService>();
-			List<ItemService> priceList = DataProvider.price[department];
+			List<ItemService> priceList = Services.DataProvider.Services[department];
 			for (int i = 0; i < priceList.Count; i++) {
 				pageObjects.Add(priceList[i]);
 
@@ -65,9 +66,11 @@ namespace InfoKiosk {
 			objects.Clear();
 			RowDefinition rowDefinition = new RowDefinition();
 			GridPagesIndicator.RowDefinitions.Add(rowDefinition);
-			Border border = new Border();
-			border.Background = new SolidColorBrush(Colors.LightGray);
-			border.Margin = new Thickness(0, 2, 0, 2);
+			Border border = new Border {
+				Background = new SolidColorBrush(Colors.LightGray),
+				Margin = new Thickness(0, 2, 0, 2)
+			};
+
 			Grid.SetRow(border, currentPageIndex);
 			GridPagesIndicator.Children.Add(border);
 

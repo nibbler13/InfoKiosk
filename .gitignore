@@ -268,3 +268,8 @@ DepartmentsPhotos_old/
 *.config
 *.settings
 InfoKiosk/Properties/Settings.Designer.cs
+
+askona/
+fonts/
+*.vsdx
+InfoKiosk/Services/Configuration.cs

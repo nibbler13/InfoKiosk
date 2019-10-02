@@ -17,8 +17,8 @@ using System.Windows.Shapes;
 namespace InfoKiosk {
 	public partial class PageCallback : Page {
 		private OnscreenKeyboard onscreenKeyboard;
-		private string mask = "+7 (___) ___-__-__";
-		private TextBox textBoxData;
+		private readonly string mask = "+7 (___) ___-__-__";
+		private readonly TextBox textBoxData;
 
 		public PageCallback() {
             InitializeComponent();
@@ -28,7 +28,7 @@ namespace InfoKiosk {
 			textBoxData.TextChanged += TextBoxData_TextChanged;
 
 			Loaded += (s, e) => {
-				//(Application.Current.MainWindow as MainWindow).SetupTitle("");
+				(Application.Current.MainWindow as MainWindow).SetupTitle(string.Empty, "Можем ли мы перезвонить Вам?");
 
 				onscreenKeyboard = new OnscreenKeyboard(ActualWidth, BorderKeyboard.ActualHeight, 0, 0, 9, 30, OnscreenKeyboard.KeyboardType.Number);
 				Canvas canvasKeyboard = onscreenKeyboard.CreateOnscreenKeyboard();
@@ -55,12 +55,10 @@ namespace InfoKiosk {
 			}
 
 			string updatedMask = mask;
-
 			Regex regex = new Regex(Regex.Escape("_"));
 
-			foreach (char c in enteredText) {
+			foreach (char c in enteredText)
 				updatedMask = regex.Replace(updatedMask, c.ToString(), 1);
-			}
 
 			TextBoxPhoneNumber.Text = updatedMask;
 		}
@@ -72,11 +70,20 @@ namespace InfoKiosk {
 		}
 
 		private void ButtonNo_Click(object sender, RoutedEventArgs e) {
+			ItemSurveyResult.Instance.SetPhoneNumber("skipped");
+
 			PageRateThanks pageRateThanks = new PageRateThanks();
 			NavigationService.Navigate(pageRateThanks);
 		}
 
 		private void ButtonNext_Click(object sender, RoutedEventArgs e) {
+			string phoneNumber = string.Empty;
+			foreach (char item in TextBoxPhoneNumber.Text.Replace("+7", "")) 
+				if (char.IsDigit(item))
+					phoneNumber += item;
+			
+			ItemSurveyResult.Instance.SetPhoneNumber(phoneNumber);
+
 			PageRateThanks pageRateThanks = new PageRateThanks();
 			NavigationService.Navigate(pageRateThanks);
 		}

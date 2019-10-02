@@ -21,7 +21,8 @@ namespace InfoKiosk.Pages {
 	public partial class PageSearch : Page {
 		private OnscreenKeyboard onscreenKeyboard;
 		private readonly PageSelectDepartment.Source source;
-		private Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages = new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
+		private readonly Dictionary<int, KeyValuePair<PageScrollableContent, Border>> pages =
+			new Dictionary<int, KeyValuePair<PageScrollableContent, Border>>();
 		private int currentPageIndex = 0;
 
 		public PageSearch(PageSelectDepartment.Source source) {
@@ -45,6 +46,8 @@ namespace InfoKiosk.Pages {
 
 				TextBoxEntered.Width = canvasKeyboard.Width;
 				TextBoxEntered.Focus();
+
+				MainWindow.Instance.SetupTitle("", "Поиск");
 			};
 
 			MainWindow.ApplyStyleForButtons(new List<Button> { ButtonClear, ButtonScrollDown, ButtonScrollUp });
@@ -105,7 +108,7 @@ namespace InfoKiosk.Pages {
 
 		private void StartSearch() {
 			string text = NormalizeString(TextBoxEntered.Text);
-			Logging.ToLog("Поиск докторов по тексту: " + text);
+			Logging.ToLog("Поиск по тексту: " + text);
 
 			if (string.IsNullOrWhiteSpace(text) ||
 				string.IsNullOrEmpty(text)) {
@@ -124,7 +127,7 @@ namespace InfoKiosk.Pages {
 			switch (source) {
 				case PageSelectDepartment.Source.Price:
 					maxElementsPerPage = 4;
-					foreach (List<ItemService> itemServiceList in DataProvider.price.Values) {
+					foreach (List<ItemService> itemServiceList in Services.DataProvider.Services.Values) {
 						foreach (ItemService itemService in itemServiceList) {
 							string[] values = text.Split(' ');
 							bool contains = true;
@@ -141,26 +144,28 @@ namespace InfoKiosk.Pages {
 						}
 					}
 					break;
+
 				case PageSelectDepartment.Source.DocInfo:
 					break;
+
 				case PageSelectDepartment.Source.Timetable:
 					maxElementsPerPage = 5;
-					foreach (KeyValuePair<string, SortedDictionary<string, SortedDictionary<string, string>>> pair in DataProvider.scheduleDepartmentsAndDoctors) {
-						foreach (string doctor in pair.Value.Keys) {
+					foreach (KeyValuePair<string, SortedDictionary<string, SortedDictionary<string, string>>> pair in Services.DataProvider.Schedule) 
+						foreach (string doctor in pair.Value.Keys) 
 							if (NormalizeString(doctor).StartsWith(text))
 								objectsFounded.Add(doctor + "@" + pair.Key);
-						}
-					}
+					
 					break;
+
 				case PageSelectDepartment.Source.DocRate:
 					maxElementsPerPage = 5;
-					foreach (KeyValuePair<string, List<string>> pair in DataProvider.surveyDepartmentsAndDoctors) {
-						foreach (string doctor in pair.Value) {
-							if (NormalizeString(doctor).StartsWith(text))
+					foreach (KeyValuePair<string, List<ItemDoctor>> pair in Services.DataProvider.Survey) 
+						foreach (ItemDoctor doctor in pair.Value) 
+							if (NormalizeString(doctor.Name).StartsWith(text))
 								objectsFounded.Add(doctor + "@" + pair.Key);
-						}
-					}
+						
 					break;
+
 				default:
 					break;
 			}
@@ -189,7 +194,6 @@ namespace InfoKiosk.Pages {
 				return;
 			}
 
-
 			try {
 				UserContent.Navigate(pages[0].Key);
 			} catch (Exception e) {
@@ -214,7 +218,7 @@ namespace InfoKiosk.Pages {
 			currentPageIndex = 0;
 		}
 
-		private string NormalizeString(string str) {
+		private static string NormalizeString(string str) {
 			return str.ToLower().Replace("ё", "е");
 		}
 
@@ -254,7 +258,7 @@ namespace InfoKiosk.Pages {
 					List<ItemService> services = new List<ItemService>();
 					foreach (string item in objects) {
 						string[] values = item.Split('@');
-						ItemService itemService = new ItemService(values[0], Convert.ToInt32(values[1]));
+						ItemService itemService = new ItemService(values[0], Convert.ToInt32(values[1]), string.Empty, string.Empty, string.Empty);
 						services.Add(itemService);
 					}
 
@@ -266,7 +270,7 @@ namespace InfoKiosk.Pages {
 					List<KeyValuePair<string, SortedDictionary<string, string>>> schedule = new List<KeyValuePair<string, SortedDictionary<string, string>>>();
 					foreach (string item in objects) {
 						string[] values = item.Split('@');
-						schedule.Add(new KeyValuePair<string, SortedDictionary<string, string>>(values[0], DataProvider.scheduleDepartmentsAndDoctors[values[1]][values[0]]));
+						schedule.Add(new KeyValuePair<string, SortedDictionary<string, string>>(values[0], Services.DataProvider.Schedule[values[1]][values[0]]));
 					}
 
 					page = new PageScrollableContent(schedule.ToArray(), maxElementsPerPage);
@@ -292,9 +296,11 @@ namespace InfoKiosk.Pages {
 			objects.Clear();
 			RowDefinition rowDefinition = new RowDefinition();
 			GridPagesIndicator.RowDefinitions.Add(rowDefinition);
-			Border border = new Border();
-			border.Background = new SolidColorBrush(Colors.LightGray);
-			border.Margin = new Thickness(0, 2, 0, 2);
+			Border border = new Border {
+				Background = new SolidColorBrush(Colors.LightGray),
+				Margin = new Thickness(0, 2, 0, 2)
+			};
+
 			Grid.SetRow(border, currentPageIndex);
 			GridPagesIndicator.Children.Add(border);
 
@@ -304,8 +310,7 @@ namespace InfoKiosk.Pages {
 
 		private void ButtonResult_Click(object sender, RoutedEventArgs e) {
 			Button button = sender as Button;
-			string docName = button.Tag as string;
-			Page page = new PageRateDoctor(docName);
+			Page page = new PageRateDoctor(button.Tag as ItemDoctor);
 			NavigationService.Navigate(page);
 		}
 	}
