@@ -21,7 +21,8 @@ namespace InfoKioskConfigManager {
 			DoctorRate,
 			Schedule,
 			Services,
-			InsertSurveyResult
+			InsertSurveyResult,
+			InsertServicePriority
 		}
 
 		public WindowSqlQueryView(Type type, string query, string filialID = "") {
@@ -38,17 +39,20 @@ namespace InfoKioskConfigManager {
 
 				switch (type) {
 					case Type.DoctorRate:
-						InfoKiosk.Services.Configuration.Instance.SqlGetSurveyInfo = queryEntered;
+						InfoKiosk.Services.Config.Instance.SqlGetSurveyInfo = queryEntered;
 						break;
 					case Type.Schedule:
-						InfoKiosk.Services.Configuration.Instance.SqlGetScheduleInfo = queryEntered;
+						InfoKiosk.Services.Config.Instance.SqlGetScheduleInfo = queryEntered;
 						break;
 					case Type.Services:
-						InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfo = queryEntered;
-						InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfoFilialID = TextBoxFilialID.Text;
+						InfoKiosk.Services.Config.Instance.SqlGetPriceInfo = queryEntered;
+						InfoKiosk.Services.Config.Instance.SqlGetPriceInfoFilialID = TextBoxFilialID.Text;
 						break;
 					case Type.InsertSurveyResult:
-						InfoKiosk.Services.Configuration.Instance.SqlInsertLoyaltySurveyResult = queryEntered;
+						InfoKiosk.Services.Config.Instance.SqlInsertLoyaltySurveyResult = queryEntered;
+						break;
+					case Type.InsertServicePriority:
+						InfoKiosk.Services.Config.Instance.SqlInsertServicePriority = queryEntered;
 						break;
 					default:
 						break;

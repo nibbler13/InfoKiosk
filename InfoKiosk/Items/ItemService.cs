@@ -17,7 +17,7 @@ namespace InfoKiosk {
 			set { 
 				if (value != priority) {
 					if (!string.IsNullOrEmpty(value) &&
-						!int.TryParse(value, out int valueParsed))
+						!int.TryParse(value, out _))
 						return;
 
 					priority = value; 

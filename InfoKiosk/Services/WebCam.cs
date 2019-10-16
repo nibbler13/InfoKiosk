@@ -15,7 +15,7 @@ namespace InfoKiosk.Services {
 		private string photoSavePath;
 
 		public string CaptureImageFromWebCamAndSave() {
-			photoSavePath = Services.Configuration.Instance.PathWebCamSaveTo;
+			photoSavePath = Services.Config.Instance.PathWebCamSaveTo;
 
 			if (Debugger.IsAttached)
 				return "Debug";
@@ -43,7 +43,9 @@ namespace InfoKiosk.Services {
 			photoSavePath += fileName;
 
 #pragma warning disable IDE0067 // Dispose objects before losing scope
+#pragma warning disable CA2000 // Dispose objects before losing scope
 			BackgroundWorker backgroundWorker = new BackgroundWorker();
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0067 // Dispose objects before losing scope
 			backgroundWorker.DoWork += BackgroundWorker_DoWork;
 			backgroundWorker.RunWorkerAsync();

@@ -21,18 +21,18 @@ namespace InfoKioskConfigManager {
 		public MainWindow() {
 			InitializeComponent();
 
-			DataContext = InfoKiosk.Services.Configuration.Instance;
+			DataContext = InfoKiosk.Services.Config.Instance;
 			Closing += MainWindow_Closing;
 			Loaded += (s, e) => {
-				if (!InfoKiosk.Services.Configuration.Instance.IsConfigReadedSuccessfull)
+				if (!InfoKiosk.Services.Config.Instance.IsConfigReadedSuccessfull)
 					MessageBox.Show(this, "Не удалось считать файл конфигурации: " +
-						InfoKiosk.Services.Configuration.Instance.ConfigFilePath + Environment.NewLine +
+						InfoKiosk.Services.Config.Instance.ConfigFilePath + Environment.NewLine +
 						"Создана новая конфигурация, заполненная стандартными значениями", "Ошибка конфигурации", MessageBoxButton.OK, MessageBoxImage.Information);
 			};
 		}
 
 		private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-			if (!InfoKiosk.Services.Configuration.Instance.IsNeedToSave)
+			if (!InfoKiosk.Services.Config.Instance.IsNeedToSave)
 				return;
 
 			MessageBoxResult result = MessageBox.Show(
@@ -40,7 +40,7 @@ namespace InfoKioskConfigManager {
 				MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
 			if (result == MessageBoxResult.Yes)
-				InfoKiosk.Services.Configuration.SaveConfiguration();
+				InfoKiosk.Services.Config.SaveConfiguration();
 			else if (result == MessageBoxResult.Cancel)
 				e.Cancel = true;
 		}
@@ -55,17 +55,20 @@ namespace InfoKioskConfigManager {
 
 				if (buttonTag.Equals("ButtonSqlRateDoctor")) {
 					type = WindowSqlQueryView.Type.DoctorRate;
-					query = InfoKiosk.Services.Configuration.Instance.SqlGetSurveyInfo;
+					query = InfoKiosk.Services.Config.Instance.SqlGetSurveyInfo;
 				} else if (buttonTag.Equals("ButtonSqlDoctorSchedule")) {
 					type = WindowSqlQueryView.Type.Schedule;
-					query = InfoKiosk.Services.Configuration.Instance.SqlGetScheduleInfo;
+					query = InfoKiosk.Services.Config.Instance.SqlGetScheduleInfo;
 				} else if (buttonTag.Equals("ButtonSqlServices")) {
 					type = WindowSqlQueryView.Type.Services;
-					query = InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfo;
-					filialId = InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfoFilialID;
+					query = InfoKiosk.Services.Config.Instance.SqlGetPriceInfo;
+					filialId = InfoKiosk.Services.Config.Instance.SqlGetPriceInfoFilialID;
 				} else if (buttonTag.Equals("ButtonSqlInsertSurveyResult")) {
 					type = WindowSqlQueryView.Type.InsertSurveyResult;
-					query = InfoKiosk.Services.Configuration.Instance.SqlInsertLoyaltySurveyResult;
+					query = InfoKiosk.Services.Config.Instance.SqlInsertLoyaltySurveyResult;
+				} else if (buttonTag.Equals("ButtonSqlInsertServicePriority")) {
+					type = WindowSqlQueryView.Type.InsertServicePriority;
+					query = InfoKiosk.Services.Config.Instance.SqlInsertServicePriority;
 				} else
 					return;
 
@@ -87,16 +90,16 @@ namespace InfoKioskConfigManager {
 				string addresses;
 				if (buttonTag.Equals("Получатели системных уведомлений:")) {
 					type = WindowRecipientsListView.Type.Admin;
-					addresses = InfoKiosk.Services.Configuration.Instance.MailAdminAddress;
+					addresses = InfoKiosk.Services.Config.Instance.MailAdminAddress;
 				} else if (buttonTag.Equals("Получатели негативных оценок про врачей:")) {
 					type = WindowRecipientsListView.Type.Doctor;
-					addresses = InfoKiosk.Services.Configuration.Instance.MailRecipientsNegativeMarksDoctor;
+					addresses = InfoKiosk.Services.Config.Instance.MailRecipientsNegativeMarksDoctor;
 				} else if (buttonTag.Equals("Получатели негативных оценок про клинику:")) {
 					type = WindowRecipientsListView.Type.Clinic;
-					addresses = InfoKiosk.Services.Configuration.Instance.MailRecipientsNegativeMarksClinic;
+					addresses = InfoKiosk.Services.Config.Instance.MailRecipientsNegativeMarksClinic;
 				} else if (buttonTag.Equals("Получатели негативных оценок про регистратуру:")) {
 					type = WindowRecipientsListView.Type.Registry;
-					addresses = InfoKiosk.Services.Configuration.Instance.MailRecipientsNegativeMarksRegistry;
+					addresses = InfoKiosk.Services.Config.Instance.MailRecipientsNegativeMarksRegistry;
 				} else
 					return;
 

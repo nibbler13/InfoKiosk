@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace InfoKiosk {
-	public static class Mail {
+	public static class ClientMail {
 		public static async void SendMail (string subject, string body, string receiver, string attachmentPath = "") {
 			Logging.ToLog("Mail - Отправка сообщения, тема: " + subject + ", текст: " + body);
 			Logging.ToLog("Mail - Получатели: " + receiver);
 
 			if (string.IsNullOrEmpty(receiver) ||
-				!Services.Configuration.Instance.ShouldSendMail) {
+				!Services.Config.Instance.ShouldSendMail) {
 				Logging.ToLog("Mail - Пропуск отправки в соответствии с настройками");
 				return;
 			}
@@ -30,6 +30,9 @@ namespace InfoKiosk {
 		}
 
 		public static void SendTestMail(string subject, string body, string receiver) {
+			if (receiver == null)
+				receiver = string.Empty;
+
 			SmtpClient client = CreateClientAndMessage(subject, body, receiver, out MailMessage message);
 			client.Send(message);
 			DisposeResources(client, message);
@@ -38,11 +41,11 @@ namespace InfoKiosk {
 		private static SmtpClient CreateClientAndMessage(string subject, string body, string receiver, out MailMessage message, string attachmentPath = "") {
 			string appName = Assembly.GetExecutingAssembly().GetName().Name;
 
-			MailAddress from = new MailAddress(Services.Configuration.Instance.MailUser, appName);
+			MailAddress from = new MailAddress(Services.Config.Instance.MailUser, appName);
 			List<MailAddress> mailAddressesTo = new List<MailAddress>();
 
 			if (receiver.Contains(" | ")) {
-				string[] receivers = Services.Configuration.GetSplittedAddresses(receiver);
+				string[] receivers = Services.Config.GetSplittedAddresses(receiver);
 				foreach (string address in receivers)
 					try {
 						mailAddressesTo.Add(new MailAddress(address));
@@ -74,7 +77,9 @@ namespace InfoKiosk {
 
 			if (!string.IsNullOrEmpty(attachmentPath) && File.Exists(attachmentPath)) {
 #pragma warning disable IDE0068 // Use recommended dispose pattern
+#pragma warning disable CA2000 // Dispose objects before losing scope
 				Attachment attachment = new Attachment(attachmentPath);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 #pragma warning restore IDE0068 // Use recommended dispose pattern
 
 				if (message.IsBodyHtml && attachmentPath.EndsWith(".jpg")) {
@@ -99,11 +104,11 @@ namespace InfoKiosk {
 			message.Subject = subject;
 			message.Body = body;
 
-			if (Services.Configuration.Instance.ShouldAddAdminToCopy) {
-				string adminAddress = Services.Configuration.Instance.MailAdminAddress;
+			if (Services.Config.Instance.ShouldAddAdminToCopy) {
+				string adminAddress = Services.Config.Instance.MailAdminAddress;
 				if (!string.IsNullOrEmpty(adminAddress))
 					if (adminAddress.Contains(" | ")) {
-						string[] adminAddresses = Services.Configuration.GetSplittedAddresses(adminAddress);
+						string[] adminAddresses = Services.Config.GetSplittedAddresses(adminAddress);
 						foreach (string address in adminAddresses)
 							try {
 								message.CC.Add(new MailAddress(address));
@@ -118,20 +123,20 @@ namespace InfoKiosk {
 						}
 			}
 
-			SmtpClient client = new SmtpClient(Services.Configuration.Instance.MailSmtpServer, (int)Services.Configuration.Instance.MailSmtpPort) {
+			SmtpClient client = new SmtpClient(Services.Config.Instance.MailSmtpServer, (int)Services.Config.Instance.MailSmtpPort) {
 				UseDefaultCredentials = false,
 				DeliveryMethod = SmtpDeliveryMethod.Network,
-				EnableSsl = Services.Configuration.Instance.MailEnableSSL,
+				EnableSsl = Services.Config.Instance.MailEnableSSL,
 				Credentials = new System.Net.NetworkCredential(
-				Services.Configuration.Instance.MailUser,
-				Services.Configuration.Instance.MailPassword)
+				Services.Config.Instance.MailUser,
+				Services.Config.Instance.MailPassword)
 			};
 
-			if (!string.IsNullOrEmpty(Services.Configuration.Instance.MailUserDomain))
+			if (!string.IsNullOrEmpty(Services.Config.Instance.MailUserDomain))
 				client.Credentials = new System.Net.NetworkCredential(
-				Services.Configuration.Instance.MailUser,
-				Services.Configuration.Instance.MailPassword,
-				Services.Configuration.Instance.MailUserDomain);
+				Services.Config.Instance.MailUser,
+				Services.Config.Instance.MailPassword,
+				Services.Config.Instance.MailUserDomain);
 
 			return client;
 		}

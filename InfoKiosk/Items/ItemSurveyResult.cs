@@ -56,6 +56,10 @@ namespace InfoKiosk {
 
 		public void RateDoctor(ItemDoctor doctor, string mark) {
 			Initialize();
+
+			if (doctor == null)
+				throw new ArgumentNullException(nameof(doctor));
+
 			DCode = doctor.Code;
 			DocName = doctor.Name;
 			DocDepartment = doctor.Department;
@@ -126,10 +130,11 @@ namespace InfoKiosk {
 				Logging.ToLog("ItemSurveyResult - Запись результата опроса в базу данных: " + surveyResult.ToString());
 
 				using (Services.FirebirdClient fBClient = new Services.FirebirdClient(
-					Services.Configuration.Instance.MisDbAddress,
-					Services.Configuration.Instance.MisDbName,
-					Services.Configuration.Instance.MisDbUserName,
-					Services.Configuration.Instance.MisDbUserPassword)) {
+					Services.Config.Instance.MisDbAddress,
+					Services.Config.Instance.MisDbPort,
+					Services.Config.Instance.MisDbName,
+					Services.Config.Instance.MisDbUserName,
+					Services.Config.Instance.MisDbUserPassword)) {
 					Dictionary<string, object> surveyResults = new Dictionary<string, object>() {
 						{ "@dcode", surveyResult.DCode },
 						{ "@docrate", mark },
@@ -139,7 +144,7 @@ namespace InfoKiosk {
 						{ "@depnum", surveyResult.DocDeptCode }
 					};
 
-					string query = Services.Configuration.Instance.SqlInsertLoyaltySurveyResult;
+					string query = Services.Config.Instance.SqlInsertLoyaltySurveyResult;
 					Logging.ToLog("ItemSurveyResult - Результат выполнения: " + fBClient.ExecuteUpdateQuery(query, surveyResults));
 
 					previousRateTime = surveyResult.SurveyDateTime.Value;
@@ -157,13 +162,13 @@ namespace InfoKiosk {
 			string mark;
 			switch (surveyResult.Type) {
 				case SurveyType.Doctor:
-					recipients = Services.Configuration.Instance.MailRecipientsNegativeMarksDoctor;
+					recipients = Services.Config.Instance.MailRecipientsNegativeMarksDoctor;
 					break;
 				case SurveyType.Registry:
-					recipients = Services.Configuration.Instance.MailRecipientsNegativeMarksRegistry;
+					recipients = Services.Config.Instance.MailRecipientsNegativeMarksRegistry;
 					break;
 				case SurveyType.Clinic:
-					recipients = Services.Configuration.Instance.MailRecipientsNegativeMarksClinic;
+					recipients = Services.Config.Instance.MailRecipientsNegativeMarksClinic;
 					break;
 				default:
 					break;
@@ -193,7 +198,7 @@ namespace InfoKiosk {
 				return;
 			}
 
-			string subject = Services.Configuration.Instance.MailClinicName + " - обратная связь с пациентом через монитор лояльности";
+			string subject = Services.Config.Instance.MailClinicName + " - обратная связь с пациентом через монитор лояльности";
 			string body =
 				header + "<br><br>" +
 				"<table border=\"1\">" +
@@ -214,7 +219,7 @@ namespace InfoKiosk {
 				body += "Фотография отсутствует";
 			body += "</b>";
 
-			Mail.SendMail(subject, body, recipients, attachmentPath);
+			ClientMail.SendMail(subject, body, recipients, attachmentPath);
 		}
 	}
 }

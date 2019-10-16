@@ -24,7 +24,7 @@ namespace InfoKioskServicesManager.Pages {
 		public ObservableCollection<InfoKiosk.ItemService> Services { get; set; } 
 			= new ObservableCollection<InfoKiosk.ItemService>();
 		public ICollectionView ServicesView { get; set; }
-		private string department;
+		private readonly string department;
 
 		public PageServicesView(string department) {
 			InitializeComponent();
@@ -97,12 +97,11 @@ namespace InfoKioskServicesManager.Pages {
 		}
 
 		private void SaveChanges() {
-			bool result = false;
-			string message = string.Empty;
+			bool result;
 			IsEnabled = false;
 			Cursor = Cursors.Wait;
 
-			result = InfoKiosk.Services.DataProvider.WriteItemServiceToDb(department, out message);
+			result = InfoKiosk.Services.DataProvider.WriteItemServiceToDb(department, out string message);
 
 			IsEnabled = true;
 			Cursor = Cursors.Arrow;
@@ -114,7 +113,7 @@ namespace InfoKioskServicesManager.Pages {
 		}
 
 		private void DataGridServices_Sorting(object sender, DataGridSortingEventArgs e) {
-			IComparer comparer = null;
+			IComparer comparer;
 
 			if (e == null) {
 				comparer = new ResultSort(ListSortDirection.Ascending, "LikeTerminal");
@@ -148,8 +147,8 @@ namespace InfoKioskServicesManager.Pages {
 		}
 
 		private class ResultSort : IComparer {
-			private ListSortDirection direction;
-			private string columnHeader;
+			private readonly ListSortDirection direction;
+			private readonly string columnHeader;
 			public ResultSort(ListSortDirection direction, string columnHeader) {
 				this.direction = direction;
 				this.columnHeader = columnHeader;

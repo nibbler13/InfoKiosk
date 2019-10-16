@@ -33,8 +33,8 @@ namespace InfoKiosk.Services {
 		public CommandHandler(Action<object> action) : this(action, DefaultCanExecute) { }
 
 		public CommandHandler(Action<object> action, Predicate<object> canExecute) {
-			this.action = action ?? throw new ArgumentNullException("action");
-			this.canExecute = canExecute ?? throw new ArgumentNullException("canExecute");
+			this.action = action ?? throw new ArgumentNullException(nameof(action));
+			this.canExecute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
 		}
 
 		public void OnCanExecuteChanged() {

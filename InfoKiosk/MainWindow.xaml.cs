@@ -52,7 +52,7 @@ namespace InfoKiosk {
 			FrameMain.JournalOwnership = JournalOwnership.OwnsJournal;
 
 			autoCloseTimer = new DispatcherTimer {
-				Interval = TimeSpan.FromSeconds(Services.Configuration.Instance.AutoCloseTimerIntervalInSeconds)
+				Interval = TimeSpan.FromSeconds(Services.Config.Instance.AutoCloseTimerIntervalInSeconds)
 			};
 
 			autoCloseTimer.Tick += AutoCloseTimer_Tick;
@@ -82,7 +82,7 @@ namespace InfoKiosk {
 			};
 			autoQuitTimer.Start();
 
-			if (Services.Configuration.Instance.IsDebug) {
+			if (Services.Config.Instance.IsDebug) {
 				Topmost = false;
 				Cursor = Cursors.Arrow;
 			}
@@ -117,7 +117,7 @@ namespace InfoKiosk {
 
 			if (FrameMain.Content is PageServices ||
 				FrameMain.Content is PageSchedule)
-				if (infoPageCloseCounter < Services.Configuration.Instance.AutoCloseTImerInfoPageMultiplier)
+				if (infoPageCloseCounter < Services.Config.Instance.AutoCloseTImerInfoPageMultiplier)
 					return;
 
 			Logging.ToLog("MainWindow - Автозакрытие страницы по таймеру");
@@ -167,6 +167,9 @@ namespace InfoKiosk {
 
 
 		public void SetupPage(Page page, Button buttonBack = null, Button buttonHome = null) {
+			if (page == null)
+				throw new ArgumentNullException(nameof(page));
+
 			page.FontFamily = new FontFamily("FuturaLightC");
 			page.FontSize = 50;
 			page.Foreground = new SolidColorBrush(Color.FromRgb(30, 30, 30));
@@ -184,6 +187,9 @@ namespace InfoKiosk {
 		}
 
 		public static void ApplyStyleForButtons(List<Button> buttons, double fontSize = 30) {
+			if (buttons == null)
+				throw new ArgumentNullException(nameof(buttons));
+
 			foreach (Button button in buttons) {
 				button.Style = MainWindow.Instance.StyleButtonRoundedCorner;
 				button.FontSize = fontSize;

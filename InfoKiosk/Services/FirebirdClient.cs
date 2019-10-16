@@ -7,7 +7,7 @@ namespace InfoKiosk.Services {
     sealed class FirebirdClient : IDisposable {
 		private readonly FbConnection connection;
 
-		public FirebirdClient(string ipAddress, string baseName, string user, string pass, bool isGui = false) {
+		public FirebirdClient(string ipAddress, int port, string baseName, string user, string pass, bool isGui = false) {
 			Logging.ToLog("FirebirdClient - Создание подключения к базе: " + 
 				ipAddress + ":" + baseName);
 
@@ -20,6 +20,7 @@ namespace InfoKiosk.Services {
 				cs.Password = pass;
 				cs.Charset = "NONE";
 				cs.Pooling = false;
+				cs.Port = port;
 
 				connection = new FbConnection(cs.ToString());
 			} catch (Exception e) {

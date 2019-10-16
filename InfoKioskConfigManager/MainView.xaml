@@ -98,6 +98,8 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -110,25 +112,31 @@
                              Text="{Binding MisDbAddress}"/>
 
                     <TextBlock Grid.Row="2"
+                               Text="Порт TCP:"/>
+                    <TextBox Grid.Row="2" 
+                             Grid.Column="2"
+                             Text="{Binding MisDbPort}"/>
+
+                    <TextBlock Grid.Row="4"
                                Text="Имя базы:"/>
-                    <TextBox Grid.Row="2"
+                    <TextBox Grid.Row="4"
                              Grid.Column="2"
                              Text="{Binding MisDbName}"/>
 
-                    <TextBlock Grid.Row="4"
+                    <TextBlock Grid.Row="6"
                                Text="Имя пользователя:"/>
-                    <TextBox Grid.Row="4"
+                    <TextBox Grid.Row="6"
                              Grid.Column="2"
                              Text="{Binding MisDbUserName}"/>
 
-                    <TextBlock Grid.Row="6"
+                    <TextBlock Grid.Row="8"
                                Text="Пароль:"/>
-                    <PasswordBox Grid.Row="6"
+                    <PasswordBox Grid.Row="8"
                              Grid.Column="2"
                              local:PasswordHelper.Attach="True"
                              local:PasswordHelper.Password="{Binding MisDbUserPassword, Mode=TwoWay}"/>
 
-                    <Button Grid.Row="8"
+                    <Button Grid.Row="10"
                             Grid.ColumnSpan="3"
                             Width="180"
                             Command="{Binding ButtonClick}"
@@ -144,6 +152,8 @@
             <TabItem Header="SQL-запросы">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
@@ -169,6 +179,11 @@
                     <Button Grid.Row="6"
                             Content="Запись результата опроса"
                             Tag="ButtonSqlInsertSurveyResult"
+                            Click="ButtonSqlQuery_Click"/>
+
+                    <Button Grid.Row="8"
+                            Content="Запись приоритета услуги"
+                            Tag="ButtonSqlInsertServicePriority"
                             Click="ButtonSqlQuery_Click"/>
                 </Grid>
             </TabItem>

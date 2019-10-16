@@ -15,35 +15,51 @@ namespace InfoKiosk {
 
 		#region VerticalOffset Property
 
+#pragma warning disable CA2211 // Non-constant fields should not be visible
 		public static DependencyProperty VerticalOffsetProperty =
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 			DependencyProperty.RegisterAttached("VerticalOffset",
 												typeof(double),
 												typeof(PageScrollAnimationBehavior),
 												new UIPropertyMetadata(0.0, OnVerticalOffsetChanged));
 
 		public static void SetVerticalOffset(FrameworkElement target, double value) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			target.SetValue(VerticalOffsetProperty, value);
 		}
 
 		public static double GetVerticalOffset(FrameworkElement target) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			return (double)target.GetValue(VerticalOffsetProperty);
 		}
 
 		#endregion
-		
+
 		#region HorizontalOffset Property
 
+#pragma warning disable CA2211 // Non-constant fields should not be visible
 		public static DependencyProperty HorizontalOffsetProperty =
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 			DependencyProperty.RegisterAttached("HorizontalOffset",
 												typeof(double),
 												typeof(PageScrollAnimationBehavior),
 												new UIPropertyMetadata(0.0, OnHorizontalOffsetChanged));
 
 		public static void SetHorizontalOffset(FrameworkElement target, double value) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			target.SetValue(HorizontalOffsetProperty, value);
 		}
 
 		public static double Cw(FrameworkElement target) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			return (double)target.GetValue(HorizontalOffsetProperty);
 		}
 
@@ -58,20 +74,28 @@ namespace InfoKiosk {
 		}
 
 		#endregion
-		
+
 		#region TimeDuration Property
 
+#pragma warning disable CA2211 // Non-constant fields should not be visible
 		public static DependencyProperty TimeDurationProperty =
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 			DependencyProperty.RegisterAttached("TimeDuration",
 												typeof(TimeSpan),
 												typeof(PageScrollAnimationBehavior),
 												new PropertyMetadata(new TimeSpan(0, 0, 0, 0, 0)));
 
 		public static void SetTimeDuration(FrameworkElement target, TimeSpan value) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			target.SetValue(TimeDurationProperty, value);
 		}
 
 		public static TimeSpan GetTimeDuration(FrameworkElement target) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			return (TimeSpan)target.GetValue(TimeDurationProperty);
 		}
 
@@ -79,17 +103,25 @@ namespace InfoKiosk {
 
 		#region PointsToScroll Property
 
+#pragma warning disable CA2211 // Non-constant fields should not be visible
 		public static DependencyProperty PointsToScrollProperty =
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 			DependencyProperty.RegisterAttached("PointsToScroll",
 												typeof(double),
 												typeof(PageScrollAnimationBehavior),
 												new PropertyMetadata(0.0));
 
 		public static void SetPointsToScroll(FrameworkElement target, double value) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			target.SetValue(PointsToScrollProperty, value);
 		}
 
 		public static double GetPointsToScroll(FrameworkElement target) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			return (double)target.GetValue(PointsToScrollProperty);
 		}
 
@@ -107,17 +139,25 @@ namespace InfoKiosk {
 
 		#region IsEnabled Property
 
+#pragma warning disable CA2211 // Non-constant fields should not be visible
 		public static DependencyProperty IsEnabledProperty =
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 												DependencyProperty.RegisterAttached("IsEnabled",
 												typeof(bool),
 												typeof(PageScrollAnimationBehavior),
 												new UIPropertyMetadata(false, OnIsEnabledChanged));
 
 		public static void SetIsEnabled(FrameworkElement target, bool value) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			target.SetValue(IsEnabledProperty, value);
 		}
 
 		public static bool GetIsEnabled(FrameworkElement target) {
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
+
 			return (bool)target.GetValue(IsEnabledProperty);
 		}
 

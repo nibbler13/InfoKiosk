@@ -30,7 +30,7 @@ namespace InfoKioskConfigManager {
 		public WindowRecipientsListView(Type type, string addresses) {
 			InitializeComponent();
 
-			string[] splitted = InfoKiosk.Services.Configuration.GetSplittedAddresses(addresses);
+			string[] splitted = InfoKiosk.Services.Config.GetSplittedAddresses(addresses);
 			foreach (string address in splitted)
 				Addresses.Add(new MailAddress(address));
 
@@ -58,16 +58,16 @@ namespace InfoKioskConfigManager {
 
 				switch (type) {
 					case Type.Admin:
-						InfoKiosk.Services.Configuration.Instance.MailAdminAddress = addressesEdited;
+						InfoKiosk.Services.Config.Instance.MailAdminAddress = addressesEdited;
 						break;
 					case Type.Doctor:
-						InfoKiosk.Services.Configuration.Instance.MailRecipientsNegativeMarksDoctor = addressesEdited;
+						InfoKiosk.Services.Config.Instance.MailRecipientsNegativeMarksDoctor = addressesEdited;
 						break;
 					case Type.Clinic:
-						InfoKiosk.Services.Configuration.Instance.MailRecipientsNegativeMarksClinic = addressesEdited;
+						InfoKiosk.Services.Config.Instance.MailRecipientsNegativeMarksClinic = addressesEdited;
 						break;
 					case Type.Registry:
-						InfoKiosk.Services.Configuration.Instance.MailRecipientsNegativeMarksRegistry = addressesEdited;
+						InfoKiosk.Services.Config.Instance.MailRecipientsNegativeMarksRegistry = addressesEdited;
 						break;
 					default:
 						break;
@@ -75,7 +75,9 @@ namespace InfoKioskConfigManager {
 			};
 		}
 
+#pragma warning disable CA1034 // Nested types should not be visible
 		public class MailAddress {
+#pragma warning restore CA1034 // Nested types should not be visible
 			public string Address { get; set; }
 			public MailAddress(string address) {
 				Address = address;

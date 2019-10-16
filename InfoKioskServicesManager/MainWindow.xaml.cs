@@ -25,7 +25,7 @@ namespace InfoKioskServicesManager {
 		}
 
 		private async void MainWindow_Loaded(object sender, RoutedEventArgs e) {
-			InfoKiosk.Services.Configuration configuration = InfoKiosk.Services.Configuration.Instance;
+			InfoKiosk.Services.Config configuration = InfoKiosk.Services.Config.Instance;
 			if (!configuration.IsConfigReadedSuccessfull) {
 				TextBlockMessage.Text = "Не удалось считать конфигурацию." + Environment.NewLine +
 					"Убедитесь, что существует файл: " + configuration.ConfigFilePath + Environment.NewLine +

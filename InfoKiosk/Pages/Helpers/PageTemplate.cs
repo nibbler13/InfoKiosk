@@ -31,10 +31,10 @@ namespace InfoKiosk {
 		protected double ElementWidth { get; private set; }
 		protected double ElementHeight { get; private set; }
 
-		protected double _leftCornerShadow = 0;
-		protected double _rightCornerShadow = 5;
+		//protected double _leftCornerShadow = 0;
+		//protected double _rightCornerShadow = 5;
 
-		protected ItemSurveyResult _surveyResult = null;
+		//protected ItemSurveyResult _surveyResult = null;
 
 
 
@@ -51,6 +51,12 @@ namespace InfoKiosk {
 										   ControlsFactory.ElementType type,
 										   RoutedEventHandler eventHandler,
 										   int elementsInRow) {
+			if (elements == null)
+				throw new ArgumentNullException(nameof(elements));
+
+			if (wrapPanel == null)
+				throw new ArgumentNullException(nameof(wrapPanel));
+
 			double elementsCreated = 0;
 			double totalElementsCreated = 0;
 			double linesCreated = 0;

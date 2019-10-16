@@ -34,7 +34,7 @@ namespace InfoKiosk.Pages {
 			SetHintText();
 
 			Loaded += (s, e) => {
-				onscreenKeyboard = new OnscreenKeyboard(ActualWidth, BorderKeyboard.ActualHeight, 0, 0, 9, 30, OnscreenKeyboard.KeyboardType.Short);
+				onscreenKeyboard = new OnscreenKeyboard(ActualWidth, BorderKeyboard.ActualHeight, 0, 0, 9, 30, OnscreenKeyboard.KeyboardType.Letters);
 				Canvas canvasKeyboard = onscreenKeyboard.CreateOnscreenKeyboard();
 				canvasKeyboard.HorizontalAlignment = HorizontalAlignment.Stretch;
 				canvasKeyboard.VerticalAlignment = VerticalAlignment.Center;

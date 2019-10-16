@@ -52,6 +52,9 @@ namespace InfoKiosk {
 		}
 
 		public PageScrollableContent(ItemService[] objects, int maxRows = 10) : this() {
+			if (objects == null)
+				throw new ArgumentNullException(nameof(objects));
+
 			this.maxRows = maxRows;
 			for (int i = 0; i < maxRows; i++)
 				GridServices.RowDefinitions.Add(new RowDefinition());
@@ -61,6 +64,9 @@ namespace InfoKiosk {
 		}
 
 		public PageScrollableContent(KeyValuePair<string, SortedDictionary<string, string>>[] objects, int maxRows = 12) : this() {
+			if (objects == null)
+				throw new ArgumentNullException(nameof(objects));
+
 			this.maxRows = maxRows;
 			for (int i = 0; i < maxRows; i++) 
 				GridSchedule.RowDefinitions.Add(new RowDefinition());

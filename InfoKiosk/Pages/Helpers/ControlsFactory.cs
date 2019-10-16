@@ -20,8 +20,8 @@ namespace InfoKiosk {
 			Button button = new Button {
 				Width = width,
 				Height = height,
-				Background = new SolidColorBrush(Services.Configuration.Instance.ColorButtonBackground),
-				Foreground = new SolidColorBrush(Services.Configuration.Instance.ColorLabelForeground),
+				Background = new SolidColorBrush(Services.Config.Instance.ColorButtonBackground),
+				Foreground = new SolidColorBrush(Services.Config.Instance.ColorLabelForeground),
 				BorderThickness = new Thickness(0)
 			};
 			AddDropShadow(button);
@@ -294,6 +294,9 @@ namespace InfoKiosk {
 
 
 		public static ImageSource ImageSourceForBitmap(System.Drawing.Bitmap bmp) {
+			if (bmp == null)
+				throw new ArgumentNullException(nameof(bmp));
+
 			var handle = bmp.GetHbitmap();
 			try {
 				return Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
@@ -309,6 +312,9 @@ namespace InfoKiosk {
 		}
 
 		public static void AddDropShadow(UIElement element, bool heavyShadow = false) {
+			if (element == null)
+				throw new ArgumentNullException(nameof(element));
+
 			int depth = 5;
 			double opacity = 0.2;
 			int blurRadius = 10;

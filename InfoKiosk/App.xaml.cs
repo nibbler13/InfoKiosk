@@ -17,19 +17,19 @@ namespace InfoKiosk {
 		private void Application_Startup(object sender, StartupEventArgs e) {
 			string msg = "App - ===== Запуск приложения";
 			Logging.ToLog(msg);
-			string adminAddress = Services.Configuration.Instance.MailAdminAddress;
-			Mail.SendMail(msg, msg, adminAddress);
+			string adminAddress = Services.Config.Instance.MailAdminAddress;
+			ClientMail.SendMail(msg, msg, adminAddress);
 
 			DispatcherUnhandledException += App_DispatcherUnhandledException;
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-			if (!Services.Configuration.Instance.IsConfigReadedSuccessfull) {
-				Mail.SendMail("Ошибка конфигурации", "Не удалось считать файл конфигурации: " + 
-					Services.Configuration.Instance.ConfigFilePath, adminAddress);
+			if (!Services.Config.Instance.IsConfigReadedSuccessfull) {
+				ClientMail.SendMail("Ошибка конфигурации", "Не удалось считать файл конфигурации: " + 
+					Services.Config.Instance.ConfigFilePath, adminAddress);
 				Logging.ToLog("App - !!! Конфигурация не загружена");
 			}
 
-			Logging.CheckAndCleanOldFiles(Services.Configuration.Instance.MaxLogfilesQuantity);
+			Logging.CheckAndCleanOldFiles(Services.Config.Instance.MaxLogfilesQuantity);
 
 			MainWindow window = new MainWindow();
 			window.Show();
@@ -49,7 +49,7 @@ namespace InfoKiosk {
 			if (exception != null) {
 				string msg = exception.Message + Environment.NewLine + exception.StackTrace;
 				Logging.ToLog("App - " + msg);
-				Mail.SendMail("Необработанное исключение", msg, Services.Configuration.Instance.MailAdminAddress);
+				ClientMail.SendMail("Необработанное исключение", msg, Services.Config.Instance.MailAdminAddress);
 			}
 
 			if (exception.InnerException != null) {

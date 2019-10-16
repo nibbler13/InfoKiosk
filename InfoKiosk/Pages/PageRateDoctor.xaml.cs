@@ -19,7 +19,7 @@ namespace InfoKiosk {
 
         public PageRateDoctor(ItemDoctor doctor) {
             InitializeComponent();
-			this.doctor = doctor;
+			this.doctor = doctor ?? throw new ArgumentNullException(nameof(doctor));
 			MainWindow.Instance.SetupPage(this, ButtonBack, ButtonHome);
 
 			Loaded += (s, e) => {

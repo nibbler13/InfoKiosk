@@ -30,7 +30,7 @@ namespace InfoKiosk {
 			Loaded += (s, e) => {
 				(Application.Current.MainWindow as MainWindow).SetupTitle(string.Empty, "Можем ли мы перезвонить Вам?");
 
-				onscreenKeyboard = new OnscreenKeyboard(ActualWidth, BorderKeyboard.ActualHeight, 0, 0, 9, 30, OnscreenKeyboard.KeyboardType.Number);
+				onscreenKeyboard = new OnscreenKeyboard(ActualWidth, BorderKeyboard.ActualHeight, 0, 0, 9, 30, OnscreenKeyboard.KeyboardType.Numbers);
 				Canvas canvasKeyboard = onscreenKeyboard.CreateOnscreenKeyboard();
 				canvasKeyboard.HorizontalAlignment = HorizontalAlignment.Stretch;
 				canvasKeyboard.VerticalAlignment = VerticalAlignment.Center;

@@ -24,10 +24,11 @@ namespace InfoKiosk.Services {
 						Logging.ToLog("Попытка: " + i);
 
 						using (FirebirdClient firebirdClient = new FirebirdClient(
-							Configuration.Instance.MisDbAddress,
-							Configuration.Instance.MisDbName,
-							Configuration.Instance.MisDbUserName,
-							Configuration.Instance.MisDbUserPassword)) {
+							Config.Instance.MisDbAddress,
+							Config.Instance.MisDbPort,
+							Config.Instance.MisDbName,
+							Config.Instance.MisDbUserName,
+							Config.Instance.MisDbUserPassword)) {
 							LoadDepartmentsAndDoctors(firebirdClient);
 							LoadSchedule(firebirdClient);
 							LoadServices(firebirdClient);
@@ -44,10 +45,11 @@ namespace InfoKiosk.Services {
 		public static bool LoadServicesInGui(out string errorMessage) {
 			try {
 				using (FirebirdClient firebirdClient = new FirebirdClient(
-					Configuration.Instance.MisDbAddress,
-					Configuration.Instance.MisDbName,
-					Configuration.Instance.MisDbUserName,
-					Configuration.Instance.MisDbUserPassword,
+					Config.Instance.MisDbAddress,
+					Config.Instance.MisDbPort,
+					Config.Instance.MisDbName,
+					Config.Instance.MisDbUserName,
+					Config.Instance.MisDbUserPassword,
 					true)) {
 					LoadServices(firebirdClient, true);
 				}
@@ -62,7 +64,7 @@ namespace InfoKiosk.Services {
 
 		private static void LoadDepartmentsAndDoctors(FirebirdClient firebirdClient) {
 			Logging.ToLog("DataProvider - Получение данных для оценки врачей");
-			using (DataTable dataTableSurvey = firebirdClient.GetDataTable(InfoKiosk.Services.Configuration.Instance.SqlGetSurveyInfo)) {
+			using (DataTable dataTableSurvey = firebirdClient.GetDataTable(InfoKiosk.Services.Config.Instance.SqlGetSurveyInfo)) {
 				Logging.ToLog("DataProvider - Получено строк: " + dataTableSurvey.Rows.Count);
 				foreach (DataRow dataRow in dataTableSurvey.Rows) {
 					string dept = ControlsFactory.FirstCharToUpper(dataRow["DEPARTMENT"].ToString(), true);
@@ -85,7 +87,7 @@ namespace InfoKiosk.Services {
 
 		private static void LoadSchedule(FirebirdClient firebirdClient) {
 			Logging.ToLog("DataProvider - Получение расписания врачей");
-			using (DataTable dataTableSchedule = firebirdClient.GetDataTable(InfoKiosk.Services.Configuration.Instance.SqlGetScheduleInfo)) {
+			using (DataTable dataTableSchedule = firebirdClient.GetDataTable(InfoKiosk.Services.Config.Instance.SqlGetScheduleInfo)) {
 				Logging.ToLog("DataProvider - Получено строк: " + dataTableSchedule.Rows.Count);
 				foreach (DataRow dataRow in dataTableSchedule.Rows) {
 					string depname = ControlsFactory.FirstCharToUpper(dataRow["DEPNAME"].ToString(), true);
@@ -107,8 +109,8 @@ namespace InfoKiosk.Services {
 		private static void LoadServices(FirebirdClient firebirdClient, bool isGui = false) {
 			Logging.ToLog("DataProvider - Получение информации о ценах и услугах");
 			using (DataTable dataTablePrice = firebirdClient.GetDataTable(
-				InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfo,
-				new Dictionary<string, object> { { "@filialID", InfoKiosk.Services.Configuration.Instance.SqlGetPriceInfoFilialID } },
+				InfoKiosk.Services.Config.Instance.SqlGetPriceInfo,
+				new Dictionary<string, object> { { "@filialID", InfoKiosk.Services.Config.Instance.SqlGetPriceInfoFilialID } },
 				isGui)) {
 				Logging.ToLog("DataProvider - Получено строк: " + dataTablePrice.Rows.Count);
 				Services = new SortedDictionary<string, List<ItemService>>();
@@ -116,7 +118,7 @@ namespace InfoKiosk.Services {
 				foreach (DataRow dataRow in dataTablePrice.Rows) {
 					string cost = dataRow["COST"].ToString();
 					if (string.IsNullOrEmpty(cost) ||
-						(int.TryParse(cost, out int costValue) && costValue < 10))
+						!int.TryParse(cost, out int costValue))
 						continue;
 
 					string group = ControlsFactory.FirstCharToUpper(dataRow["GROUP"].ToString(), true);
@@ -126,15 +128,7 @@ namespace InfoKiosk.Services {
 					string serviceName = dataRow["SERVICE_NAME"].ToString();
 					string serviceKodoper = dataRow["SERVICE_CODE"].ToString();
 					string serviceSchid = dataRow["SCHID"].ToString();
-					string priority = dataRow["INFOKIOSK_PRIORITY"].ToString();
-
-					//if (!string.IsNullOrEmpty(priority))
-					//	Console.WriteLine("");
-
-					//bool isPriorityParsed = int.TryParse(priority, out int priorityParsed);
-					//int? priorityVaue = null;
-					//if (isPriorityParsed)
-					//	priorityVaue = priorityParsed;
+					string priority = dataRow["PRIORITY"].ToString();
 
 					Services[group].Add(new ItemService(serviceName, costValue, serviceSchid, serviceKodoper, priority));
 				}
@@ -151,16 +145,13 @@ namespace InfoKiosk.Services {
 			}
 
 			int i = 0;
-			string query = "update wschema " +
-				 "set infokiosk_priority = @priority " +
-				 "where schid = @schid";
-
 			try {
 				using (FirebirdClient firebirdClient = new FirebirdClient(
-					Configuration.Instance.MisDbAddress,
-					Configuration.Instance.MisDbName,
-					Configuration.Instance.MisDbUserName,
-					Configuration.Instance.MisDbUserPassword)) {
+					Config.Instance.MisDbAddress,
+					Config.Instance.MisDbPort,
+					Config.Instance.MisDbName,
+					Config.Instance.MisDbUserName,
+					Config.Instance.MisDbUserPassword)) {
 					foreach (ItemService item in Services[department]) {
 						if (!item.HasChanged)
 							continue;
@@ -170,10 +161,10 @@ namespace InfoKiosk.Services {
 							priorityValue = priority;
 
 						bool result = firebirdClient.ExecuteUpdateQuery(
-							query, 
+							Config.Instance.SqlInsertServicePriority, 
 							new Dictionary<string, object> {
-								{ "@priority", priorityValue },
-								{ "@schid", item.Schid } 
+								{ "@schid", item.Schid },
+								{ "@priority", priorityValue }
 							}, 
 							true);
 

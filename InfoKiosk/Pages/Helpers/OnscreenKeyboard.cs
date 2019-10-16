@@ -20,7 +20,7 @@ namespace InfoKiosk {
 		private readonly double fontSize;
 		private Button buttonShift;
 		private Button buttonEnter;
-		public enum KeyboardType { Full, Short, Number }
+		public enum KeyboardType { Full, Letters, Numbers }
 		private readonly KeyboardType keyboardType;
 		/// </summary>
 
@@ -71,19 +71,19 @@ namespace InfoKiosk {
 			};
 
 			int optionalKeysCount = 4;
-			if (keyboardType == KeyboardType.Short || keyboardType == KeyboardType.Number)
+			if (keyboardType == KeyboardType.Letters || keyboardType == KeyboardType.Numbers)
 				for (int i = 0; i < keys.Count; i++) {
-					if (keyboardType == KeyboardType.Short) {
+					if (keyboardType == KeyboardType.Letters) {
 						keys[i].RemoveRange(keys[i].Count - optionalKeysCount, optionalKeysCount);
 						keys[i].RemoveRange(0, optionalKeysCount);
-					} else if (keyboardType == KeyboardType.Number) {
+					} else if (keyboardType == KeyboardType.Numbers) {
 						keys[i].RemoveRange(0, keys[i].Count - optionalKeysCount + 1);
 					}
 				}
 
 			double keyboardSizeCoefficient = 0.9;
 
-			if (keyboardType == KeyboardType.Number)
+			if (keyboardType == KeyboardType.Numbers)
 				keys[3][2] = "backspace";
 
 			int keysInLine = keys[0].Count;
@@ -189,7 +189,7 @@ namespace InfoKiosk {
 						keyName.Equals("backspace") ||
 						keyName.Equals("Ввод") ||
 						keyName.Equals("clear"))
-						buttonKey.Background = new SolidColorBrush(Services.Configuration.Instance.ColorDisabled);
+						buttonKey.Background = new SolidColorBrush(Services.Config.Instance.ColorDisabled);
 
 					if (imageToButton != null) {
 						Image image = ControlsFactory.CreateImage((System.Drawing.Bitmap)imageToButton);
@@ -250,15 +250,15 @@ namespace InfoKiosk {
 
 			if (isDoubleClick) {
 				currentShiftKeyStatus = ShiftKeyStatus.Capslock;
-				color = Services.Configuration.Instance.ColorButtonBackground;
+				color = Services.Config.Instance.ColorButtonBackground;
 				image = Properties.Resources.ButtonCapslock;
 			} else if (currentShiftKeyStatus == ShiftKeyStatus.Unpressed) {
 				currentShiftKeyStatus = ShiftKeyStatus.Pressed;
-				color = Services.Configuration.Instance.ColorButtonBackground;
+				color = Services.Config.Instance.ColorButtonBackground;
 				image = Properties.Resources.ButtonShiftPressed;
 			} else {
 				currentShiftKeyStatus = ShiftKeyStatus.Unpressed;
-				color = Services.Configuration.Instance.ColorDisabled;
+				color = Services.Config.Instance.ColorDisabled;
 				image = Properties.Resources.ButtonShiftUnpressed;
 			}
 
